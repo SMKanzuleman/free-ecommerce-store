@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('aura_theme') || 'dark');</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraStore - Free Modern E-Commerce Platform</title>
+  <meta name="description" content="100% Free E-commerce platform with Cosmetics, Tech, and Clothing. Direct WhatsApp order checkout with zero fees.">
+  
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+
+  <!-- Main Navigation Header -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      
+      <!-- Mobile Hamburger Menu Button -->
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle Menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <!-- Brand Logo -->
+      <a href="index.html" class="brand-logo">
+        <div class="logo-icon"><i class="fa-solid fa-store"></i></div>
+        <span class="logo-text" id="store-brand-name">Aura<span>Store</span></span>
+      </a>
+
+      <!-- Navbar Categories Only (Cosmetics, Tech, Clothing) -->
+      <nav class="nav-categories" id="nav-categories">
+        <a href="#shop" class="nav-cat-link" data-category="cosmetics"><i class="fa-solid fa-wand-magic-sparkles"></i> Cosmetics</a>
+        <a href="#shop" class="nav-cat-link" data-category="tech"><i class="fa-solid fa-laptop"></i> Tech</a>
+        <a href="#shop" class="nav-cat-link" data-category="clothing"><i class="fa-solid fa-shirt"></i> Clothing</a>
+      </nav>
+
+      <!-- Nav Action Icons -->
+      <div class="nav-actions">
+        <!-- Username Greeting -->
+        <a href="dashboard.html" class="user-greeting hidden" id="nav-user-greeting">
+          <div class="nav-avatar" id="nav-user-avatar">U</div>
+          <span id="nav-username-span">Guest</span>
+        </a>
+
+        <!-- Account Icon (Owner Protected Admin Panel) -->
+        <a href="login.html" class="icon-btn account-btn" title="Sign In / Register" id="nav-account-btn">
+          <i class="fa-solid fa-user"></i>
+        </a>
+
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="icon-btn" title="Toggle Dark/Light Mode">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+
+        <!-- Cart Trigger Button -->
+        <button id="cart-btn" class="cart-trigger-btn">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span class="cart-btn-text">Cart</span>
+          <span class="cart-badge" id="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-drawer-overlay hidden" id="mobile-drawer-overlay"></div>
+  <aside class="mobile-drawer hidden" id="mobile-drawer">
+    <div class="mobile-drawer-header">
+      <div class="brand-logo">
+        <div class="logo-icon"><i class="fa-solid fa-store"></i></div>
+        <span class="logo-text">Aura<span>Store</span></span>
+      </div>
+      <button class="icon-btn" id="close-mobile-drawer"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="mobile-drawer-body">
+      <h4>Categories</h4>
+      <div class="mobile-cat-list">
+        <button class="mobile-cat-btn" data-category="cosmetics"><i class="fa-solid fa-wand-magic-sparkles"></i> Cosmetics</button>
+        <button class="mobile-cat-btn" data-category="tech"><i class="fa-solid fa-laptop"></i> Tech</button>
+        <button class="mobile-cat-btn" data-category="clothing"><i class="fa-solid fa-shirt"></i> Clothing</button>
+      </div>
+      <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid var(--border-color);">
+      <a href="admin.html" class="btn btn-secondary" style="width:100%; justify-content:center;">
+        <i class="fa-solid fa-user-gear"></i> Log in
+      </a>
+    </div>
+  </aside>
+
+  <!-- 100vh Full Screen Hero Section -->
+  <section class="hero-section" id="hero">      
+    <div class="container hero-container">
+      <div class="hero-text">
+        <h1>Elevate Your Lifestyle with <span>Cosmetics, Tech & Clothing</span></h1>
+        <p>Launch & run your online store with zero payment card fees. Receive instant customer orders directly via WhatsApp, Cash on Delivery, or Bank Transfer!</p>
+        
+        <div class="hero-buttons">
+          <a href="#shop" class="btn btn-primary btn-lg"><i class="fa-solid fa-basket-shopping"></i> Explore</a>
+          <a href="login.html" class="btn btn-primary btn-lg"><i class="fa-solid fa-user-lock"></i> Log in</a>
+        </div>
+      </div>
+      
+      <!-- Hero 3-Category Image Showcase Collage -->
+      <div class="hero-showcase">
+        <div class="hero-image-grid">
+          
+          <!-- Cosmetics Image Card -->
+          <a href="#shop" class="hero-img-card cosmetics-card" onclick="setCategoryFilter('cosmetics')">
+            <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80" alt="Cosmetics Collection" class="hero-card-img">
+            <div class="hero-card-overlay">
+              <span class="hero-card-tag cosmetics-tag"><i class="fa-solid fa-wand-magic-sparkles"></i> Cosmetics</span>
+            </div>
+          </a>
+
+          <!-- Tech Image Card -->
+          <a href="#shop" class="hero-img-card tech-card" onclick="setCategoryFilter('tech')">
+            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80" alt="Tech Gear Collection" class="hero-card-img">
+            <div class="hero-card-overlay">
+              <span class="hero-card-tag tech-tag"><i class="fa-solid fa-laptop"></i> Tech</span>
+            </div>
+          </a>
+
+          <!-- Clothing Image Card -->
+          <a href="#shop" class="hero-img-card clothing-card" onclick="setCategoryFilter('clothing')">
+            <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80" alt="Clothing Collection" class="hero-card-img">
+            <div class="hero-card-overlay">
+              <span class="hero-card-tag clothing-tag"><i class="fa-solid fa-shirt"></i> Clothing</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <a href="#shop" class="hero-scroll-down" title="Scroll to Shop">
+      <i class="fa-solid fa-chevron-down"></i>
+    </a>
+  </section>
+
+  <!-- All Products Section & Unified Toolbar -->
+  <section class="container shop-header-section" id="shop">
+    
+    <!-- Centered All Products Heading -->
+    <div class="shop-title-area centered-shop-title">
+      <h2>All Products</h2>
+      <span class="active-category-tag" id="active-filter-label">Showing All Products</span>
+    </div>
+
+    <!-- Unified Horizontal Controls Row -->
+    <div class="clean-filter-row">
+      <!-- Left Controls: Filters Label & Category Pills -->
+      <div class="filter-left-group">
+        <span class="filter-heading-label"><i class="fa-solid fa-filter"></i> Filters:</span>
+        
+        <div class="category-buttons" id="category-list">
+          <button class="cat-btn" data-category="cosmetics"><i class="fa-solid fa-wand-magic-sparkles"></i> Cosmetics</button>
+          <button class="cat-btn" data-category="tech"><i class="fa-solid fa-laptop"></i> Tech</button>
+          <button class="cat-btn" data-category="clothing"><i class="fa-solid fa-shirt"></i> Clothing</button>
+          <button class="cat-btn reset-filters-pill" id="btn-clear-filters-pill"><i class="fa-solid fa-arrow-rotate-left"></i> Clear</button>
+        </div>
+      </div>
+
+      <!-- Right Side: Search Bar -->
+      <div class="shop-search-small">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="search-input" placeholder="Search products...">
+        <button id="clear-search-btn" class="clear-search hidden"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Full-Width Products Grid Section (No Sidebar) -->
+  <main class="container full-width-shop">
+    <div class="products-header" style="margin-bottom: 1.5rem;">
+      <h3>Products Available (<span id="product-count">0</span>)</h3>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="product-grid" id="product-grid">
+      <!-- Dynamic Products Injected via JS -->
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state hidden" id="empty-state">
+      <div class="empty-icon"><i class="fa-solid fa-box-open"></i></div>
+      <h3>No Products Found</h3>
+      <p>Try clearing your search query or adjusting your filters.</p>
+      <button class="btn btn-primary" id="clear-all-filters-btn">Clear All Filters</button>
+    </div>
+  </main>
+
+  <!-- Product Detail Modal -->
+  <div class="modal-overlay hidden" id="product-modal">
+    <div class="modal-card">
+      <button class="close-modal-btn" id="close-product-modal"><i class="fa-solid fa-xmark"></i></button>
+      <div class="product-modal-body" id="modal-product-content">
+        <!-- Dynamic content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Shopping Cart Drawer -->
+  <div class="cart-drawer-overlay hidden" id="cart-overlay"></div>
+  <aside class="cart-drawer hidden" id="cart-drawer">
+    <div class="cart-header">
+      <h3><i class="fa-solid fa-bag-shopping"></i> Shopping Cart</h3>
+      <button id="close-cart-btn" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="cart-items-container" id="cart-items">
+      <!-- Dynamic Cart Items -->
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-summary-line">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">$0.00</span>
+      </div>
+      <div class="cart-summary-line">
+        <span>Shipping</span>
+        <span class="free-tag">FREE</span>
+      </div>
+      <div class="cart-summary-line total-line">
+        <span>Total</span>
+        <span id="cart-total">$0.00</span>
+      </div>
+
+
+
+      <button class="btn btn-whatsapp-checkout" id="proceed-checkout-btn">
+        <i class="fa-brands fa-whatsapp"></i> Complete Order
+      </button>
+    </div>
+  </aside>
+
+  <!-- Order Checkout Modal -->
+  <div class="modal-overlay hidden" id="checkout-modal">
+    <div class="modal-card checkout-modal-card">
+      <button class="close-modal-btn" id="close-checkout-modal"><i class="fa-solid fa-xmark"></i></button>
+      <div class="checkout-form-container">
+        <h3><i class="fa-solid fa-truck-fast"></i> Shipping Details</h3>
+        <p class="subtitle">Enter your contact details to complete the order (No credit card needed).</p>
+        
+        <form id="order-form">
+          <div class="form-group">
+            <label for="customer-name">Full Name *</label>
+            <input type="text" id="customer-name" placeholder="e.g. Sarah Jenkins" required>
+          </div>
+          <div class="form-group">
+            <label for="customer-phone">WhatsApp / Contact Phone *</label>
+            <input type="tel" id="customer-phone" placeholder="e.g. +1234567890" required>
+          </div>
+          <div class="form-group">
+            <label for="customer-address">Delivery Address *</label>
+            <textarea id="customer-address" rows="2" placeholder="Street Address, City, Zip Code" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="customer-notes">Notes / Special Instructions (Optional)</label>
+            <input type="text" id="customer-notes" placeholder="Color preference, gate code...">
+          </div>
+
+          <div class="order-summary-box" id="order-summary-box">
+            <!-- Dynamic summary -->
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" id="send-order-btn">
+            <i class="fa-solid fa-paper-plane"></i> Send Order Now
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Security Passcode Modal -->
+  <div class="modal-overlay hidden" id="admin-pin-modal">
+    <div class="modal-card" style="max-width: 420px; text-align: center;">
+      <button class="close-modal-btn" id="close-admin-pin-modal"><i class="fa-solid fa-xmark"></i></button>
+      <div style="padding: 1rem 0;">
+        <div style="width:64px; height:64px; border-radius:50%; background:var(--primary-light); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:0 auto 1rem auto; box-shadow:var(--shadow-glow);">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+        <h3 style="font-size:1.4rem; font-weight:800; margin-bottom:0.4rem;">Store Owner Authentication</h3>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1.5rem;">Enter your Security PIN to access the Admin Panel.</p>
+        
+        <form id="admin-pin-form">
+          <div class="form-group">
+            <input type="password" id="admin-pin-input" placeholder="Enter PIN (Default: 1234)" style="text-align:center; font-size:1.2rem; letter-spacing:0.3em;" required maxlength="10">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:0.9rem;">
+            <i class="fa-solid fa-key"></i> Unlock Admin Panel
+          </button>
+        </form>
+        <p style="font-size:0.78rem; color:var(--text-muted); margin-top:1.2rem;"><i class="fa-solid fa-shield-halved"></i> Default PIN is <strong>1234</strong> (Can be changed in Admin settings)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <!-- Column 1: Brand & Desc -->
+      <div class="footer-col footer-about">
+        <a href="index.html" class="brand-logo">
+          <div class="logo-icon"><i class="fa-solid fa-store"></i></div>
+          <span class="logo-text">Aura<span>Store</span></span>
+        </a>
+        <p class="footer-desc" id="footer-desc-text">Your ultimate destination for premium cosmetics, cutting-edge tech, and modern clothing. Built 100% free with no hidden hosting or card verification fees.</p>
+        <div class="footer-socials">
+          <a href="#" class="social-link" id="footer-link-fb" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-link" id="footer-link-ig" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-link" id="footer-link-tw" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" class="social-link" id="footer-link-pin" title="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="footer-col">
+        <h4>Shop Directory</h4>
+        <ul class="footer-menu">
+          <li><a href="index.html#all-products">All Products</a></li>
+          <li><a href="index.html#all-products">Cosmetics Catalog</a></li>
+          <li><a href="index.html#all-products">Tech Catalog</a></li>
+          <li><a href="index.html#all-products">Clothing Catalog</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Legal & Support -->
+      <div class="footer-col">
+        <h4>Legal & Support</h4>
+        <ul class="footer-menu">
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="disclaimer.html">Disclaimer</a></li>
+          <li><a href="contact.html">Contact Me</a></li>
+          <li><a href="login.html">Owner Admin Login</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Contact Details -->
+      <div class="footer-col footer-contact-col">
+        <h4>Contact Us</h4>
+        <ul class="footer-contact-list">
+          <li>
+            <i class="fa-solid fa-envelope"></i>
+            <span id="footer-email-text">support@aurastore.com</span>
+          </li>
+          <li>
+            <i class="fa-solid fa-phone"></i>
+            <span id="footer-phone-text">+1 (555) 123-4567</span>
+          </li>
+          <li>
+            <i class="fa-solid fa-location-dot"></i>
+            <span id="footer-address-text">123 Storefront Ave, Retail District, CA 90210</span>
+          </li>
+          <li>
+            <i class="fa-brands fa-whatsapp" style="color: var(--whatsapp);"></i>
+            <a href="https://wa.me/15551234567" target="_blank" class="whatsapp-contact-link" id="footer-whatsapp-link">Chat on WhatsApp</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-container">
+        <p id="footer-copyright-text">&copy; 2026 AuraStore. All rights reserved. Zero Card Verification Fees. Zero Hosting Costs.</p>
+        <p style="font-size: 0.8rem; opacity: 0.8;">Secured by WhatsApp Order Checkout</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
