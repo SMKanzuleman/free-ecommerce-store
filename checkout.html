@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('aura_theme') || 'dark');</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - AuraStore</title>
+  <meta name="description" content="Complete your order details with zero credit card fees.">
+  
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .checkout-page-body {
+      background: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .checkout-main {
+      padding-top: 3rem;
+      padding-bottom: 5rem;
+      flex: 1;
+    }
+
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .checkout-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 8px 40px rgba(99,102,241,0.08);
+    }
+
+    .checkout-card-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .checkout-card-header h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .checkout-card-header p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 0.4rem;
+    }
+
+    /* Premium form field styles */
+    .co-field {
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+
+    .co-field label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .co-field input,
+    .co-field textarea,
+    .co-field select {
+      width: 100%;
+      padding: 0.9rem 1rem 0.9rem 2.8rem;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-color);
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .co-field textarea {
+      padding-left: 2.8rem;
+      resize: none;
+    }
+
+    .co-field select {
+      padding-left: 2.8rem;
+      appearance: none;
+      cursor: pointer;
+    }
+
+     .co-field input:focus,
+    .co-field textarea:focus,
+    .co-field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+      background: var(--bg-card);
+    }
+
+    /* Override Chrome Autofill styling */
+    .co-field input:-webkit-autofill,
+    .co-field input:-webkit-autofill:hover, 
+    .co-field input:-webkit-autofill:focus,
+    .co-field textarea:-webkit-autofill,
+    .co-field textarea:-webkit-autofill:hover,
+    .co-field textarea:-webkit-autofill:focus,
+    .co-field select:-webkit-autofill,
+    .co-field select:-webkit-autofill:hover,
+    .co-field select:-webkit-autofill:focus {
+      border: 1.5px solid var(--border-color) !important;
+      -webkit-text-fill-color: var(--text-main) !important;
+      -webkit-box-shadow: 0 0 0px 1000px var(--bg-main) inset !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
+    .co-field .field-icon {
+      position: absolute;
+      left: 0.9rem;
+      top: 2.55rem;
+      color: var(--primary);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+
+    .co-field textarea ~ .field-icon {
+      top: 2.6rem;
+    }
+
+    /* Method selector cards */
+    .method-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .method-option {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--bg-main);
+    }
+
+    .method-option:has(input:checked) {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .method-option input[type="radio"] {
+      accent-color: var(--primary);
+      width: 18px;
+      height: 18px;
+    }
+
+    .method-option .method-icon {
+      font-size: 1.4rem;
+    }
+
+    .method-option .method-info strong {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .method-option .method-info span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Order summary */
+    .summary-item-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .summary-item-img {
+      width: 58px;
+      height: 58px;
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .co-submit-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      width: 100%;
+      padding: 1.1rem;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #25d366, #128C7E);
+      color: white;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      box-shadow: 0 6px 24px rgba(37,211,102,0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+      letter-spacing: 0.02em;
+    }
+
+    .co-submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(37,211,102,0.45);
+    }
+
+    .order-totals {
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 2px dashed var(--border-color);
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.4rem 0;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .total-row.final {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .free-tag {
+      background: #d1fae5;
+      color: #065f46;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+    }
+
+    @media (max-width: 900px) {
+      .checkout-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .checkout-card {
+        padding: 1.25rem;
+      }
+      .checkout-main {
+        padding-top: 1.5rem;
+        padding-bottom: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body class="checkout-page-body">
+
+  <!-- Header -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="logo-icon"><i class="fa-solid fa-store"></i></div>
+        <span class="logo-text">Aura<span>Store</span></span>
+      </a>
+
+      <a href="index.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back to Storefront</a>
+    </div>
+  </header>
+
+  <!-- Checkout Page Content -->
+  <main class="container checkout-main">
+    <div class="checkout-grid">
+      
+      <!-- Left: Shipping & Order Form -->
+      <section class="checkout-card">
+        <div class="checkout-card-header">
+          <h2><i class="fa-solid fa-truck-fast"></i> Shipping & Contact Details</h2>
+          <p style="color:var(--text-muted); font-size:0.9rem;">Complete your details to send your order (No payment card needed).</p>
+        </div>
+
+        <form id="standalone-checkout-form">
+
+          <div class="co-field">
+            <label for="c-address">Delivery Address *</label>
+            <textarea id="c-address" rows="3" placeholder="Street Address, City, Postal Code" required></textarea>
+            <i class="fa-solid fa-location-dot field-icon"></i>
+          </div>
+
+          <div class="co-field">
+            <label for="c-notes">Special Delivery Notes <span style="font-weight:400;color:var(--text-muted);">(Optional)</span></label>
+            <input type="text" id="c-notes" placeholder="Gate code, landmark, preferred time...">
+            <i class="fa-solid fa-note-sticky field-icon"></i>
+          </div>
+
+          <input type="hidden" id="c-method" value="whatsapp">
+
+          <button type="submit" class="co-submit-btn">
+            <i class="fa-brands fa-whatsapp" style="font-size:1.3rem;"></i>
+            Complete Order Now
+          </button>
+        </form>
+      </section>
+
+      <!-- Right: Order Summary -->
+      <aside class="checkout-card">
+        <div class="checkout-card-header">
+          <h2><i class="fa-solid fa-bag-shopping"></i> Order Summary</h2>
+        </div>
+
+        <div id="checkout-items-list">
+          <!-- Dynamic Items -->
+        </div>
+
+        <div class="order-totals">
+          <div class="total-row">
+            <span>Subtotal</span>
+            <span id="c-subtotal">$0.00</span>
+          </div>
+          <div class="total-row">
+            <span>Shipping</span>
+            <span class="free-tag">FREE</span>
+          </div>
+          <div class="total-row final">
+            <span>Total Amount</span>
+            <span id="c-total" style="color:var(--primary);">$0.00</span>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+    const GOOGLE_SHEET_URL = state.settings.googleSheetUrl;
+    let state = {
+      cart: JSON.parse(localStorage.getItem("aura_cart")) || [],
+      settings: JSON.parse(localStorage.getItem("aura_settings")) || { whatsappNumber: "15551234567", currency: "$", storeName: "AuraStore" }
+    };
+
+      document.addEventListener("DOMContentLoaded", () => {
+      // Dynamic store name logo update
+      const logoEl = document.querySelector(".brand-logo .logo-text");
+      if (logoEl && state.settings.storeName) {
+        const name = state.settings.storeName;
+        if (name.toLowerCase().endsWith("store") && name.toLowerCase() !== "store") {
+          const base = name.substring(0, name.toLowerCase().lastIndexOf("store"));
+          logoEl.innerHTML = `${base}<span>Store</span>`;
+        } else {
+          logoEl.innerHTML = name;
+        }
+      }
+      if (state.settings.storeName) {
+        document.title = `Checkout - ${state.settings.storeName}`;
+      }
+
+      renderSummary();
+
+      // Get user info from session (always)
+      const isUserAuth = sessionStorage.getItem("aura_user_auth") === "true";
+      const currentUser = JSON.parse(sessionStorage.getItem("aura_current_user"));
+
+      document.getElementById("standalone-checkout-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (state.cart.length === 0) {
+          alert("Your cart is empty!");
+          return;
+        }
+
+        const name = (isUserAuth && currentUser) ? currentUser.username : "Guest";
+        const phone = (isUserAuth && currentUser) ? (currentUser.wpNumber || "") : "";
+        const address = document.getElementById("c-address").value.trim();
+        const notes = document.getElementById("c-notes").value.trim();
+        const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+        // Always WhatsApp
+        let msg = `🛒 *NEW ORDER - ${state.settings.storeName.toUpperCase()}*\n\n`;
+        msg += `👤 *Customer:* ${name}\n`;
+        if (phone) msg += `📞 *Phone:* ${phone}\n`;
+        msg += `📍 *Address:* ${address}\n`;
+        if (notes) msg += `📝 *Notes:* ${notes}\n`;
+        msg += `\n📦 *Items:*\n`;
+        state.cart.forEach((item, i) => {
+          msg += `${i + 1}. ${item.title} x${item.quantity} — ${state.settings.currency}${(item.price * item.quantity).toFixed(2)}\n`;
+        });
+        msg += `\n💰 *Total:* ${state.settings.currency}${subtotal.toFixed(2)}`;
+
+        const waUrl = `https://wa.me/${state.settings.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+        window.open(waUrl, "_blank");
+
+        const orderId = Math.floor(100000 + Math.random() * 900000);
+
+        // Save order details to user order history if logged in
+        if (isUserAuth && currentUser) {
+          const newOrder = {
+            id: orderId,
+            createdAt: new Date().toISOString(),
+            address: address,
+            itemsCount: state.cart.reduce((sum, item) => sum + item.quantity, 0),
+            totalAmount: subtotal,
+            status: "Submitted"
+          };
+          const userOrdersKey = `aura_orders_${currentUser.username}`;
+          const userOrders = JSON.parse(localStorage.getItem(userOrdersKey)) || [];
+          userOrders.unshift(newOrder);
+          localStorage.setItem(userOrdersKey, JSON.stringify(userOrders));
+        }
+
+        // Sync order to Google Sheet
+        if (GOOGLE_SHEET_URL) {
+          try {
+            await fetch(GOOGLE_SHEET_URL, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "text/plain" },
+              body: JSON.stringify({
+                action: "checkout",
+                orderId: orderId,
+                name: name,
+                phone: phone,
+                address: address,
+                total: subtotal
+              }),
+              keepalive: true
+            });
+          } catch (err) {
+            console.log("Google Sheets order sync failed:", err);
+          }
+        }
+
+        localStorage.setItem("aura_cart", JSON.stringify([]));
+        window.location.href = "index.html";
+      });
+    });
+
+    function renderSummary() {
+      const container = document.getElementById("checkout-items-list");
+      const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+      document.getElementById("c-subtotal").textContent = `${state.settings.currency}${subtotal.toFixed(2)}`;
+      document.getElementById("c-total").textContent = `${state.settings.currency}${subtotal.toFixed(2)}`;
+
+      if (state.cart.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:1.5rem;">Your cart is empty.</p>`;
+        return;
+      }
+
+      container.innerHTML = state.cart.map(item => `
+        <div class="summary-item-row">
+          <img src="${item.image}" alt="${item.title}" class="summary-item-img">
+          <div style="flex:1;">
+            <h4 style="font-size:0.9rem; font-weight:700;">${item.title}</h4>
+            <span style="font-size:0.8rem; color:var(--text-muted);">${item.quantity}x @ ${state.settings.currency}${item.price.toFixed(2)}</span>
+          </div>
+          <strong style="font-size:0.95rem; color:var(--primary);">${state.settings.currency}${(item.price * item.quantity).toFixed(2)}</strong>
+        </div>
+      `).join("");
+    }
+  </script>
+</body>
+</html>

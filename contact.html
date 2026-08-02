@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Me - AuraStore</title>
+  <meta name="description" content="Get in touch with the shop owner or webmaster. Send us a message or chat via WhatsApp.">
+  
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .contact-page-body {
+      background-color: var(--bg-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .contact-main {
+      padding-top: 3.5rem;
+      padding-bottom: 6rem;
+      flex: 1;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 3.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    .contact-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 3rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .contact-card h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+    }
+
+    .contact-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .contact-info-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .contact-info-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.8rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      gap: 1.25rem;
+      transition: var(--transition);
+    }
+
+    .contact-info-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary);
+    }
+
+    .info-card-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .info-card-details h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+    }
+
+    .info-card-details p, 
+    .info-card-details a {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .info-card-details a:hover {
+      color: var(--primary);
+    }
+
+    .contact-form-group {
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .contact-form-group label {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .contact-form-group input,
+    .contact-form-group textarea {
+      width: 100%;
+      padding: 0.85rem 1.1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .contact-form-group input:focus,
+    .contact-form-group textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    @media (max-width: 900px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+      .contact-card {
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+<body class="contact-page-body">
+
+  <!-- Header/Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="logo-icon"><i class="fa-solid fa-store"></i></div>
+        <span class="logo-text">Aura<span>Store</span></span>
+      </a>
+
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <a href="index.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back to Storefront</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Contact Layout -->
+  <main class="container contact-main">
+    <div class="contact-grid">
+      
+      <!-- Left Column: Contact Form -->
+      <section class="contact-card">
+        <h1>Send Me a Message</h1>
+        <p>Fill out the form below to get in touch with us. We usually respond within 24 hours.</p>
+
+        <form id="contact-me-form">
+          <div class="contact-form-group">
+            <label for="contact-name">Your Full Name *</label>
+            <input type="text" id="contact-name" placeholder="e.g. John Doe" required>
+          </div>
+
+          <div class="contact-form-group">
+            <label for="contact-email">Email Address *</label>
+            <input type="email" id="contact-email" placeholder="e.g. johndoe@gmail.com" required>
+          </div>
+
+          <div class="contact-form-group">
+            <label for="contact-subject">Subject</label>
+            <input type="text" id="contact-subject" placeholder="e.g. Question about order tracking">
+          </div>
+
+          <div class="contact-form-group">
+            <label for="contact-message">Your Message *</label>
+            <textarea id="contact-message" rows="5" placeholder="Write your message details here..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.05rem; margin-top: 1rem;">
+            <i class="fa-solid fa-paper-plane"></i> Send Message
+          </button>
+        </form>
+      </section>
+
+      <!-- Right Column: Contact Details Cards -->
+      <aside class="contact-info-panel">
+        
+        <!-- Card 1: WhatsApp -->
+        <div class="contact-info-card">
+          <div class="info-card-icon" style="background: rgba(37, 211, 102, 0.12); color: var(--whatsapp);">
+            <i class="fa-brands fa-whatsapp"></i>
+          </div>
+          <div class="info-card-details">
+            <h3>WhatsApp Support</h3>
+            <p>Direct chat with customer care</p>
+            <a href="https://wa.me/15551234567" target="_blank" style="color: var(--whatsapp); font-weight: 700; display: inline-block; margin-top: 0.25rem;">Chat on WhatsApp &rarr;</a>
+          </div>
+        </div>
+
+        <!-- Card 2: Email -->
+        <div class="contact-info-card">
+          <div class="info-card-icon">
+            <i class="fa-solid fa-envelope"></i>
+          </div>
+          <div class="info-card-details">
+            <h3>Email Address</h3>
+            <p>Send details or business inquiries</p>
+            <a href="mailto:support@aurastore.com" style="font-weight: 700;">support@aurastore.com</a>
+          </div>
+        </div>
+
+        <!-- Card 3: Phone -->
+        <div class="contact-info-card">
+          <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.12); color: var(--secondary);">
+            <i class="fa-solid fa-phone"></i>
+          </div>
+          <div class="info-card-details">
+            <h3>Phone Contact</h3>
+            <p>Mon - Fri, 9:00 AM - 5:00 PM EST</p>
+            <a href="tel:+15551234567" style="font-weight: 700;">+1 (555) 123-4567</a>
+          </div>
+        </div>
+
+        <!-- Card 4: Location -->
+        <div class="contact-info-card">
+          <div class="info-card-icon" style="background: rgba(245, 158, 11, 0.12); color: var(--accent);">
+            <i class="fa-solid fa-location-dot"></i>
+          </div>
+          <div class="info-card-details">
+            <h3>Storefront Address</h3>
+            <p>123 Storefront Ave, CA 90210</p>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <!-- Column 1: Brand & Desc -->
+      <div class="footer-col footer-about">
+        <a href="index.html" class="brand-logo">
+          <div class="logo-icon"><i class="fa-solid fa-store"></i></div>
+          <span class="logo-text">Aura<span>Store</span></span>
+        </a>
+        <p class="footer-desc" id="footer-desc-text">Your ultimate destination for premium cosmetics, cutting-edge tech, and modern clothing. Built 100% free with no hidden hosting or card verification fees.</p>
+        <div class="footer-socials">
+          <a href="#" class="social-link" id="footer-link-fb" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-link" id="footer-link-ig" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-link" id="footer-link-tw" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" class="social-link" id="footer-link-pin" title="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="footer-col">
+        <h4>Shop Directory</h4>
+        <ul class="footer-menu">
+          <li><a href="index.html#all-products">All Products</a></li>
+          <li><a href="index.html#all-products">Cosmetics Catalog</a></li>
+          <li><a href="index.html#all-products">Tech Catalog</a></li>
+          <li><a href="index.html#all-products">Clothing Catalog</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Legal & Support -->
+      <div class="footer-col">
+        <h4>Legal & Support</h4>
+        <ul class="footer-menu">
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="disclaimer.html">Disclaimer</a></li>
+          <li><a href="contact.html">Contact Me</a></li>
+          <li><a href="login.html">Owner Admin Login</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Contact Details -->
+      <div class="footer-col footer-contact-col">
+        <h4>Contact Us</h4>
+        <ul class="footer-contact-list">
+          <li>
+            <i class="fa-solid fa-envelope"></i>
+            <span id="footer-email-text">support@aurastore.com</span>
+          </li>
+          <li>
+            <i class="fa-solid fa-phone"></i>
+            <span id="footer-phone-text">+1 (555) 123-4567</span>
+          </li>
+          <li>
+            <i class="fa-solid fa-location-dot"></i>
+            <span id="footer-address-text">123 Storefront Ave, Retail District, CA 90210</span>
+          </li>
+          <li>
+            <i class="fa-brands fa-whatsapp" style="color: var(--whatsapp);"></i>
+            <a href="https://wa.me/15551234567" target="_blank" class="whatsapp-contact-link" id="footer-whatsapp-link">Chat on WhatsApp</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-container">
+        <p id="footer-copyright-text">&copy; 2026 AuraStore. All rights reserved. Zero Card Verification Fees. Zero Hosting Costs.</p>
+        <p style="font-size: 0.8rem; opacity: 0.8;">Secured by WhatsApp Order Checkout</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+
+  <!-- Contact Form Submission JS -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Dynamic store configuration loading for details cards
+      const settings = Object.assign({
+        whatsappNumber: "15551234567",
+        currency: "$",
+        storeName: "AuraStore",
+        footerPhone: "+1 (555) 123-4567",
+        footerEmail: "support@aurastore.com",
+        footerAddress: "123 Storefront Ave, Retail District, CA 90210"
+      }, JSON.parse(localStorage.getItem("aura_settings")) || {});
+
+      const waCardLink = document.querySelector(".contact-info-card a[href*='wa.me']");
+      if (waCardLink && settings.whatsappNumber) {
+        waCardLink.href = `https://wa.me/${settings.whatsappNumber.replace(/\+/g, "")}`;
+      }
+
+      const emailCardLink = document.querySelector(".contact-info-card a[href^='mailto:']");
+      if (emailCardLink && settings.footerEmail) {
+        emailCardLink.href = `mailto:${settings.footerEmail}`;
+        emailCardLink.textContent = settings.footerEmail;
+      }
+
+      const phoneCardLink = document.querySelector(".contact-info-card a[href^='tel:']");
+      if (phoneCardLink && settings.footerPhone) {
+        phoneCardLink.href = `tel:${settings.footerPhone.replace(/[\s\(\)\-+]/g, "")}`;
+        phoneCardLink.textContent = settings.footerPhone;
+      }
+
+      const addressCardPara = document.querySelector(".contact-info-card:nth-child(4) p:nth-child(2)");
+      if (addressCardPara && settings.footerAddress) {
+        addressCardPara.textContent = settings.footerAddress;
+      }
+
+      const contactForm = document.getElementById("contact-me-form");
+      if (contactForm) {
+        contactForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          
+          const name = document.getElementById("contact-name").value.trim();
+          
+          // Show Success Toast
+          showContactToast(`Thank you, ${name}! Your message has been sent successfully.`, "success");
+          
+          // Reset Form
+          contactForm.reset();
+        });
+      }
+    });
+
+    function showContactToast(message, type = "info") {
+      const container = document.getElementById("toast-container");
+      if (!container) return;
+
+      const toast = document.createElement("div");
+      toast.className = `toast toast-${type}`;
+      
+      const icon = type === "success" ? "fa-circle-check" : "fa-info-circle";
+      toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+      
+      container.appendChild(toast);
+      
+      // Auto remove
+      setTimeout(() => {
+        toast.remove();
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

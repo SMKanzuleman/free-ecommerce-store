@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disclaimer - AuraStore</title>
+  <meta name="description" content="Legal Disclaimer and usage terms for AuraStore storefront demo catalog.">
+  
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .legal-page-body {
+      background-color: var(--bg-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .legal-main {
+      padding-top: 3.5rem;
+      padding-bottom: 6rem;
+      flex: 1;
+    }
+
+    .legal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 3.5rem;
+      box-shadow: var(--shadow-lg);
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    .legal-card h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+    }
+
+    .legal-meta {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+
+    .legal-content h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-top: 2rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .legal-content p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 1.2rem;
+    }
+
+    @media (max-width: 768px) {
+      .legal-card {
+        padding: 2rem;
+      }
+      .legal-card h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body class="legal-page-body">
+
+  <!-- Header/Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="logo-icon"><i class="fa-solid fa-store"></i></div>
+        <span class="logo-text">Aura<span>Store</span></span>
+      </a>
+
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <a href="index.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back to Storefront</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container legal-main">
+    <article class="legal-card">
+      <h1>Disclaimer</h1>
+      <div class="legal-meta">
+        <span><i class="fa-solid fa-calendar-days"></i> Last Updated: August 2026</span>
+        <span><i class="fa-solid fa-triangle-exclamation"></i> Store Notice</span>
+      </div>
+
+      <div class="legal-content">
+        <p>By browsing, accessing, or placing sample orders on AuraStore, you acknowledge and agree to the following conditions and terms of store use:</p>
+
+        <h3>1. Platform Scope & Purpose</h3>
+        <p>AuraStore is a demonstration, template-driven client-side e-commerce store. It runs entirely in the buyer's web browser, using local browser storage (localStorage) and client-side scripts. This platform operates without commercial cloud databases, processing services, monthly hosting costs, or transaction verification fees.</p>
+
+        <h3>2. Product Catalog Information</h3>
+        <p>Unless customized otherwise by the actual storefront owner, the default product listings, pricing details, specifications, images, and description catalogs displayed in the Cosmetics, Tech, and Clothing categories are placeholder mock-ups intended for review, evaluation, and design testing. We make no guarantees about product availability, merchantable quality, or shipping logistics of physical items.</p>
+
+        <h3>3. Direct Checkout Order Validation</h3>
+        <p>When clicking checkout, our system compiles order information into a readable text message and prompts to open WhatsApp. Any order placed via the WhatsApp checkout mechanism does not constitute a legal, binding, or finalized purchasing transaction. Real-world order validation, product delivery availability checks, shipping charge assessments, and payment arrangements are performed manually and directly by the store representative responding through WhatsApp.</p>
+
+        <h3>4. No Warranty of Accuracy</h3>
+        <p>While the template offers an interactive, smooth user interface, we make no warranties of any kind, express or implied, about the completeness, accuracy, reliability, or availability of the website information, pricing details, settings configurations, or direct contact links. Any reliance you place on these mock elements is strictly at your own discretion.</p>
+
+        <h3>5. Technical Disclaimer</h3>
+        <p>We are not liable for transient storefront layout changes, database/localStorage data clearings, or browser compatibility constraints that could affect wishlist lists or current product configurations inside your browser cache.</p>
+      </div>
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <!-- Column 1: Brand & Desc -->
+      <div class="footer-col footer-about">
+        <a href="index.html" class="brand-logo">
+          <div class="logo-icon"><i class="fa-solid fa-store"></i></div>
+          <span class="logo-text">Aura<span>Store</span></span>
+        </a>
+        <p class="footer-desc" id="footer-desc-text">Your ultimate destination for premium cosmetics, cutting-edge tech, and modern clothing. Built 100% free with no hidden hosting or card verification fees.</p>
+        <div class="footer-socials">
+          <a href="#" class="social-link" id="footer-link-fb" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-link" id="footer-link-ig" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-link" id="footer-link-tw" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" class="social-link" id="footer-link-pin" title="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="footer-col">
+        <h4>Shop Directory</h4>
+        <ul class="footer-menu">
+          <li><a href="index.html#all-products">All Products</a></li>
+          <li><a href="index.html#all-products">Cosmetics Catalog</a></li>
+          <li><a href="index.html#all-products">Tech Catalog</a></li>
+          <li><a href="index.html#all-products">Clothing Catalog</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Legal & Support -->
+      <div class="footer-col">
+        <h4>Legal & Support</h4>
+        <ul class="footer-menu">
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="disclaimer.html">Disclaimer</a></li>
+          <li><a href="contact.html">Contact Me</a></li>
+          <li><a href="login.html">Owner Admin Login</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Contact Details -->
+      <div class="footer-col footer-contact-col">
+        <h4>Contact Us</h4>
+        <ul class="footer-contact-list">
+          <li>
+            <i class="fa-solid fa-envelope"></i>
+            <span id="footer-email-text">support@aurastore.com</span>
+          </li>
+          <li>
+            <i class="fa-solid fa-phone"></i>
+            <span id="footer-phone-text">+1 (555) 123-4567</span>
+          </li>
+          <li>
+            <i class="fa-solid fa-location-dot"></i>
+            <span id="footer-address-text">123 Storefront Ave, Retail District, CA 90210</span>
+          </li>
+          <li>
+            <i class="fa-brands fa-whatsapp" style="color: var(--whatsapp);"></i>
+            <a href="https://wa.me/15551234567" target="_blank" class="whatsapp-contact-link" id="footer-whatsapp-link">Chat on WhatsApp</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-container">
+        <p id="footer-copyright-text">&copy; 2026 AuraStore. All rights reserved. Zero Card Verification Fees. Zero Hosting Costs.</p>
+        <p style="font-size: 0.8rem; opacity: 0.8;">Secured by WhatsApp Order Checkout</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

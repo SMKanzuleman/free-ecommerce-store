@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('aura_theme') || 'dark');</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Authentication - AuraStore</title>
+  <meta name="description" content="Secure Store login and customer portal authentication.">
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .login-page-body {
+      background-color: var(--bg-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .login-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 440px;
+      min-height: 70vh;
+      padding: 2.2rem 2.2rem 1.8rem 2.2rem;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .login-icon-box {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1.5rem auto;
+      box-shadow: var(--shadow-glow);
+    }
+
+    /* Auth Tab Styling */
+    .auth-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 2rem;
+      gap: 0.5rem;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      padding: 0.85rem;
+      border: none;
+      background: none;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: var(--transition);
+    }
+
+    .auth-tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .auth-tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .auth-form-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .auth-form-container.hidden {
+      display: none !important;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-main);
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+      box-sizing: border-box;
+    }
+
+    .form-group select {
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%2394a3b8' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 0.4rem center;
+      background-size: 1.2rem;
+      padding-right: 1.6rem !important;
+    }
+
+    /* Override Chrome Autofill styling */
+    .form-group input:-webkit-autofill,
+    .form-group input:-webkit-autofill:hover,
+    .form-group input:-webkit-autofill:focus,
+    .form-group select:-webkit-autofill,
+    .form-group select:-webkit-autofill:hover,
+    .form-group select:-webkit-autofill:focus {
+      border: 1px solid var(--border-color) !important;
+      -webkit-text-fill-color: var(--text-main) !important;
+      -webkit-box-shadow: 0 0 0px 1000px var(--bg-main) inset !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: #090d16;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-accent:hover {
+      background: #e08e0b;
+      color: #090d16;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(245, 158, 11, 0.45);
+    }
+
+    @media (max-width: 440px) {
+      .login-card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="login-page-body">
+
+  <div class="login-card">
+    <a href="index.html" class="brand-logo" style="justify-content: center; margin-bottom: 1.5rem;">
+      <div class="logo-icon"><i class="fa-solid fa-store"></i></div>
+      <span class="logo-text">Aura<span>Store</span></span>
+    </a>
+
+    <!-- Dual Tab System -->
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" id="btn-login-tab">Login</button>
+      <button class="auth-tab-btn" id="btn-signup-tab">Sign Up</button>
+    </div>
+
+    <!-- LOGIN FORM CONTAINER -->
+    <div class="auth-form-container" id="login-container">
+
+
+      <form id="standalone-login-form">
+        <div class="form-group">
+          <label for="login-phone">Phone Number *</label>
+          <div style="display:flex; gap:0.5rem;">
+            <select id="login-country-code" style="width:105px; padding:0.75rem 0.5rem; font-weight:700;">
+              <option value="92">+92 (PK)</option>
+              <option value="1">+1 (US)</option>
+              <option value="91">+91 (IN)</option>
+              <option value="44">+44 (UK)</option>
+              <option value="966">+966 (SA)</option>
+              <option value="971">+971 (AE)</option>
+              <option value="20">+20 (EG)</option>
+              <option value="62">+62 (ID)</option>
+              <option value="234">+234 (NG)</option>
+              <option value="880">+880 (BD)</option>
+            </select>
+            <input type="text" id="login-phone" placeholder="e.g. 3456789123 or JooRoot66" required style="flex:1;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password *</label>
+          <input type="password" id="login-password" placeholder="Enter Password" required
+            autocomplete="current-password">
+        </div>
+
+        <div style="text-align: right; margin-top: -0.5rem; margin-bottom: 1.25rem;">
+          <a href="#" id="btn-forgot-password"
+            style="font-size: 0.8rem; color: var(--primary); text-decoration: none; font-weight: 600;">Forgot
+            Password?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary"
+          style="width: 100%; justify-content: center; padding: 0.95rem; font-size: 1.05rem; margin-top: 1rem;">
+          <i class="fa-solid fa-right-to-bracket"></i> Sign In
+        </button>
+      </form>
+    </div>
+
+    <!-- SIGN UP FORM CONTAINER -->
+    <div class="auth-form-container hidden" id="signup-container">
+
+
+      <form id="standalone-signup-form">
+        <div class="form-group">
+          <label for="signup-username">Name* </label>
+          <input type="text" id="signup-username" placeholder="e.g. JohnDoe" required autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label for="signup-phone">WhatsApp Number *</label>
+          <div style="display:flex; gap:0.5rem;">
+            <select id="signup-country-code" style="width:105px; padding:0.75rem 0.5rem; font-weight:700;">
+              <option value="92">+92 PK</option>
+              <option value="1">+1 US</option>
+              <option value="91">+91 IN</option>
+              <option value="44">+44 UK</option>
+              <option value="966">+966 SA</option>
+              <option value="971">+971 AE</option>
+              <option value="20">+20 (EG)</option>
+              <option value="62">+62 (ID)</option>
+              <option value="234">+234 (NG)</option>
+              <option value="880">+880 (BD)</option>
+            </select>
+            <input type="text" id="signup-phone" placeholder="e.g. 3456789123" required style="flex:1;">
+          </div>
+          <small style="color:var(--text-muted); font-size:0.75rem; text-align:left; display:block;">Used for instant
+            WhatsApp delivery confirmations.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="signup-password">Choose Password *</label>
+          <input type="password" id="signup-password" placeholder="Enter secure password" required
+            autocomplete="new-password">
+        </div>
+
+        <button type="submit" class="btn btn-accent"
+          style="width: 100%; justify-content: center; padding: 0.95rem; font-size: 1.05rem; margin-top: 1rem;">
+          <i class="fa-solid fa-circle-check"></i> Complete Registration
+        </button>
+      </form>
+    </div>
+
+    <!-- FORGOT PASSWORD FORM CONTAINER -->
+    <div class="auth-form-container hidden" id="forgot-container">
+
+
+      <!-- Step 1: Verification -->
+      <form id="forgot-verify-form">
+        <div class="form-group">
+          <label for="forgot-phone">Registered Phone Number *</label>
+          <div style="display:flex; gap:0.5rem;">
+            <select id="forgot-country-code" style="width:105px; padding:0.75rem 0.5rem; font-weight:700;">
+              <option value="92">+92 (PK)</option>
+              <option value="1">+1 (US)</option>
+              <option value="91">+91 (IN)</option>
+              <option value="44">+44 (UK)</option>
+              <option value="966">+966 (SA)</option>
+              <option value="971">+971 (AE)</option>
+              <option value="20">+20 (EG)</option>
+              <option value="62">+62 (ID)</option>
+              <option value="234">+234 (NG)</option>
+              <option value="880">+880 (BD)</option>
+            </select>
+            <input type="text" id="forgot-phone" placeholder="e.g. 3456789123" required style="flex:1;">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary"
+          style="width: 100%; justify-content: center; padding: 0.95rem; font-size: 1.05rem; margin-top: 1rem;">
+          <i class="fa-solid fa-circle-right"></i> Verify Phone Number
+        </button>
+      </form>
+
+      <!-- Step 2: New Password input (hidden initially) -->
+      <form id="forgot-reset-form" class="hidden">
+        <div class="form-group">
+          <label for="forgot-new-password">Choose New Password *</label>
+          <input type="password" id="forgot-new-password" placeholder="Enter new password" required
+            autocomplete="new-password">
+        </div>
+
+        <div class="form-group">
+          <label for="forgot-confirm-password">Confirm New Password *</label>
+          <input type="password" id="forgot-confirm-password" placeholder="Confirm new password" required
+            autocomplete="new-password">
+        </div>
+
+        <button type="submit" class="btn btn-primary"
+          style="width: 100%; justify-content: center; padding: 0.95rem; font-size: 1.05rem; margin-top: 1rem;">
+          <i class="fa-solid fa-circle-check"></i> Reset Password
+        </button>
+      </form>
+
+      <!-- Back Link -->
+      <div style="margin-top: 1.5rem; text-align: center;">
+        <a href="#" id="btn-back-to-login"
+          style="color: var(--primary); font-size: 0.85rem; font-weight: 700; text-decoration: none; display: inline-block;"><i
+            class="fa-solid fa-arrow-left"></i> Back to Login</a>
+      </div>
+    </div>
+
+    <!-- Return to Store -->
+    <div
+      style="margin-top: 1.8rem; border-top: 1px solid var(--border-color); padding-top: 1.2rem; text-align: center;">
+      <a href="index.html"
+        style="color: var(--primary); font-size: 0.85rem; font-weight: 700; text-decoration: none; display: inline-block;"><i
+          class="fa-solid fa-arrow-left"></i> Return to Storefront</a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Load dynamic Settings (such as store name) on logo
+      const settings = Object.assign({
+        storeName: "AuraStore",
+        googleSheetUrl: ""
+      }, JSON.parse(localStorage.getItem("aura_settings")) || {});
+      const GOOGLE_SHEET_URL = settings.googleSheetUrl;
+
+      const logoEl = document.querySelector(".brand-logo .logo-text");
+      if (logoEl && settings.storeName) {
+        const name = settings.storeName;
+        if (name.toLowerCase().endsWith("store") && name.toLowerCase() !== "store") {
+          const base = name.substring(0, name.toLowerCase().lastIndexOf("store"));
+          logoEl.innerHTML = `${base}<span>Store</span>`;
+        } else {
+          logoEl.innerHTML = name;
+        }
+      }
+
+      // Tab Swapping Logic
+      const loginBtn = document.getElementById("btn-login-tab");
+      const signupBtn = document.getElementById("btn-signup-tab");
+      const loginContainer = document.getElementById("login-container");
+      const signupContainer = document.getElementById("signup-container");
+
+      loginBtn.addEventListener("click", () => {
+        loginBtn.classList.add("active");
+        signupBtn.classList.remove("active");
+        loginContainer.classList.remove("hidden");
+        signupContainer.classList.add("hidden");
+        forgotContainer.classList.add("hidden");
+      });
+
+      signupBtn.addEventListener("click", () => {
+        signupBtn.classList.add("active");
+        loginBtn.classList.remove("active");
+        signupContainer.classList.remove("hidden");
+        loginContainer.classList.add("hidden");
+        forgotContainer.classList.add("hidden");
+      });
+
+      // Forgot Password Navigation
+      const forgotBtn = document.getElementById("btn-forgot-password");
+      const backToLoginBtn = document.getElementById("btn-back-to-login");
+      const forgotContainer = document.getElementById("forgot-container");
+      const authTabs = document.querySelector(".auth-tabs");
+
+      forgotBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        authTabs.classList.add("hidden");
+        loginContainer.classList.add("hidden");
+        signupContainer.classList.add("hidden");
+        forgotContainer.classList.remove("hidden");
+
+        // Reset steps
+        document.getElementById("forgot-verify-form").classList.remove("hidden");
+        document.getElementById("forgot-reset-form").classList.add("hidden");
+        document.getElementById("forgot-verify-form").reset();
+        document.getElementById("forgot-reset-form").reset();
+      });
+
+      backToLoginBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        authTabs.classList.remove("hidden");
+        loginContainer.classList.remove("hidden");
+        forgotContainer.classList.add("hidden");
+      });
+
+      // Verification handler
+      let userIndexToReset = -1;
+      document.getElementById("forgot-verify-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const countryCode = document.getElementById("forgot-country-code").value;
+        const phoneInput = document.getElementById("forgot-phone").value.trim().replace(/\D/g, "").replace(/^0+/, "");
+        const fullPhone = countryCode + phoneInput;
+
+        const users = JSON.parse(localStorage.getItem("aura_users")) || [];
+        const foundIndex = users.findIndex(u => {
+          const userWpClean = u.wpNumber.replace(/\D/g, "");
+          return userWpClean === fullPhone || userWpClean === phoneInput;
+        });
+
+        if (foundIndex > -1) {
+          userIndexToReset = foundIndex;
+          document.getElementById("forgot-verify-form").classList.add("hidden");
+          document.getElementById("forgot-reset-form").classList.remove("hidden");
+        } else {
+          alert("❌ Access Denied! Phone number not registered under any customer profile.");
+        }
+      });
+
+      // Reset Submit handler
+      document.getElementById("forgot-reset-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const newPassword = document.getElementById("forgot-new-password").value.trim();
+        const confirmPassword = document.getElementById("forgot-confirm-password").value.trim();
+
+        if (newPassword.length < 4) {
+          alert("❌ Password must be at least 4 characters long.");
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          alert("❌ Passwords do not match! Please confirm password again.");
+          return;
+        }
+
+        const users = JSON.parse(localStorage.getItem("aura_users")) || [];
+        if (userIndexToReset > -1 && users[userIndexToReset]) {
+          users[userIndexToReset].password = newPassword;
+          localStorage.setItem("aura_users", JSON.stringify(users));
+
+          // Sync reset to Google Sheets if connected
+          if (GOOGLE_SHEET_URL) {
+            try {
+              await fetch(GOOGLE_SHEET_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({
+                  action: "reset",
+                  phone: users[userIndexToReset].wpNumber,
+                  newPassword: newPassword,
+                  adminEmail: settings.adminEmail || ""
+                })
+              });
+            } catch (err) {
+              console.log("Google Sheets sync failed:", err);
+            }
+          }
+
+          alert("🎉 Password successfully reset! Please login now using your new password.");
+          backToLoginBtn.click();
+        } else {
+          alert("❌ Error: Reset session expired. Please verify your phone number again.");
+          backToLoginBtn.click();
+        }
+      });
+
+      // Login handler
+      document.getElementById("standalone-login-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const phoneInput = document.getElementById("login-phone").value.trim();
+        const password = document.getElementById("login-password").value.trim();
+
+        // 1. Check Super Admin Credentials
+        if (phoneInput === "JooRoot66" && password === "666666") {
+          sessionStorage.setItem("aura_admin_auth", "true");
+          sessionStorage.setItem("aura_current_user", JSON.stringify({ username: "JooRoot66", role: "admin" }));
+          window.location.href = "admin.html";
+          return;
+        }
+
+        // 2. Normalize entered phone number
+        const countryCode = document.getElementById("login-country-code").value;
+        const localNum = phoneInput.replace(/\D/g, "").replace(/^0+/, "");
+        const fullPhoneNum = countryCode + localNum;
+
+        // Check customer credentials in aura_users
+        const users = JSON.parse(localStorage.getItem("aura_users")) || [];
+        const matchedUser = users.find(u => {
+          const userWpClean = u.wpNumber.replace(/\D/g, "");
+          return (userWpClean === fullPhoneNum || userWpClean === localNum) && u.password === password;
+        });
+
+        if (matchedUser) {
+          sessionStorage.setItem("aura_user_auth", "true");
+          sessionStorage.setItem("aura_current_user", JSON.stringify(matchedUser));
+          window.location.href = "dashboard.html";
+        } else {
+          alert("❌ Access Denied! Invalid Phone Number or Password.");
+        }
+      });
+
+      // Signup handler
+      document.getElementById("standalone-signup-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const username = document.getElementById("signup-username").value.trim();
+        const countryCode = document.getElementById("signup-country-code").value;
+        const phoneBody = document.getElementById("signup-phone").value.trim().replace(/\D/g, "").replace(/^0+/, "");
+        const fullPhoneNum = countryCode + phoneBody;
+        const password = document.getElementById("signup-password").value.trim();
+
+        // Check if admin name is used
+        if (username.toLowerCase() === "jooroot66") {
+          alert("❌ This username is reserved for administrators!");
+          return;
+        }
+
+        const users = JSON.parse(localStorage.getItem("aura_users")) || [];
+
+        // Check duplicate username
+        if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+          alert("❌ This username is already registered! Please choose another.");
+          return;
+        }
+
+        // Check duplicate phone number
+        if (users.some(u => u.wpNumber === fullPhoneNum)) {
+          alert("❌ This phone number is already registered! Please choose another.");
+          return;
+        }
+
+        // Create new user profile
+        const newUser = {
+          username,
+          wpNumber: fullPhoneNum,
+          password,
+          registeredAt: new Date().toISOString()
+        };
+
+        // Sync signup to Google Sheet
+        if (GOOGLE_SHEET_URL) {
+          try {
+            await fetch(GOOGLE_SHEET_URL, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "text/plain" },
+              body: JSON.stringify({
+                action: "signup",
+                username: username,
+                phone: fullPhoneNum,
+                password: password,
+                adminEmail: settings.adminEmail || ""
+              })
+            });
+          } catch (err) {
+            console.log("Google Sheets sync failed:", err);
+          }
+        }
+
+        users.push(newUser);
+        localStorage.setItem("aura_users", JSON.stringify(users));
+
+        alert(`🎉 Account for "${username}" created successfully! Please login now.`);
+        document.getElementById("standalone-signup-form").reset();
+        loginBtn.click();
+      });
+    });
+  </script>
+</body>
+
+</html>

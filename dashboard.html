@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('aura_theme') || 'dark');</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Dashboard - AuraStore</title>
+  <meta name="description" content="Your private customer portal. Track order history and manage your storefront wishlist.">
+  
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .dashboard-page-body {
+      background-color: var(--bg-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dashboard-navbar {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .dashboard-nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dashboard-main-container {
+      padding-top: 2.5rem;
+      padding-bottom: 5rem;
+      flex: 1;
+    }
+
+    /* Portal Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 2.2rem;
+      align-items: start;
+    }
+
+    /* Left Account Card */
+    .user-profile-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2.2rem;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+    }
+
+    .user-avatar-wrapper {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.2rem auto;
+      cursor: pointer;
+    }
+
+    .user-avatar-circle {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--primary-gradient);
+      color: white;
+      font-size: 2.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-glow);
+      font-weight: 800;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .user-avatar-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.45);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: var(--transition);
+      font-size: 1.25rem;
+    }
+
+    .user-avatar-wrapper:hover .user-avatar-overlay {
+      opacity: 1;
+    }
+
+    .profile-badge {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 0.78rem;
+      padding: 0.3rem 0.85rem;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: inline-block;
+      margin-bottom: 1.5rem;
+    }
+
+    .user-details-list {
+      text-align: left;
+      list-style: none;
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .user-details-list li {
+      margin-bottom: 1rem;
+      font-size: 0.92rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .user-details-list span.detail-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .user-details-list span.detail-value {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* Right Panels */
+    .portal-section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2.2rem;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 2.2rem;
+    }
+
+    .portal-section-header {
+      margin-bottom: 1.8rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .portal-section-header h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--text-main);
+    }
+
+    /* Wishlist Horizontal Cards */
+    .wishlist-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .wishlist-item-card {
+      background: var(--bg-main);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      transition: var(--transition);
+    }
+
+    .wishlist-item-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+      border-color: var(--primary);
+    }
+
+    .wishlist-item-img {
+      width: 65px;
+      height: 65px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+    }
+
+    .wishlist-item-details {
+      flex: 1;
+    }
+
+    .wishlist-item-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+
+    .wishlist-item-price {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .wishlist-item-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    /* Orders Table */
+    .portal-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+    }
+
+    .portal-table th, .portal-table td {
+      padding: 0.95rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .portal-table th {
+      background: var(--bg-main);
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .portal-table td {
+      font-size: 0.92rem;
+    }
+
+    .order-status-badge {
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      display: inline-block;
+    }
+
+    .status-submitted {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--primary);
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="dashboard-page-body">
+
+  <!-- Header Navbar -->
+  <header class="dashboard-navbar">
+    <div class="container dashboard-nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="logo-icon"><i class="fa-solid fa-store"></i></div>
+        <span class="logo-text" id="dashboard-store-name">Aura<span>Store</span></span>
+      </a>
+
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <a href="index.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back to Storefront</a>
+        <button id="btn-logout" class="btn btn-primary" style="background:#ef4444; border:none;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dashboard Content -->
+  <main class="container dashboard-main-container">
+    <div class="dashboard-grid">
+      
+      <!-- Left Panel: User Info -->
+      <aside class="user-profile-card">
+        <div class="user-avatar-wrapper" id="btn-change-avatar" title="Click to upload profile photo">
+          <div class="user-avatar-circle" id="user-avatar-initials">U</div>
+          <div class="user-avatar-overlay">
+            <i class="fa-solid fa-camera"></i>
+          </div>
+        </div>
+        <input type="file" id="user-avatar-input" accept="image/*" class="hidden">
+        <h2 style="font-size: 1.45rem; font-weight: 800; margin-bottom: 0.35rem;" id="user-display-name">Customer Name</h2>
+        <span class="profile-badge">Customer Profile</span>
+        
+        <ul class="user-details-list">
+          <li>
+            <span class="detail-label">Username</span>
+            <span class="detail-value" id="detail-username">@customer</span>
+          </li>
+          <li>
+            <span class="detail-label">WhatsApp Contact</span>
+            <span class="detail-value" id="detail-phone">+1 000 000 0000</span>
+          </li>
+          <li>
+            <span class="detail-label">Registered Since</span>
+            <span class="detail-value" id="detail-registered-date">August 2026</span>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Right Panel: Wishlist & Order History -->
+      <section style="display:flex; flex-direction:column; gap:0.25rem;">
+        
+        <!-- Wishlist Card -->
+        <div class="portal-section-card">
+          <div class="portal-section-header">
+            <h2><i class="fa-solid fa-heart" style="color:#ef4444;"></i> Saved Wishlist (<span id="wishlist-count">0</span>)</h2>
+            <a href="index.html#shop" class="btn btn-secondary" style="font-size:0.8rem; padding:0.4rem 0.8rem;"><i class="fa-solid fa-plus"></i> Shop More</a>
+          </div>
+
+          <div class="wishlist-grid" id="dashboard-wishlist-container">
+            <!-- Dynamic Wishlist Items -->
+          </div>
+        </div>
+
+        <!-- Order History Card -->
+        <div class="portal-section-card">
+          <div class="portal-section-header">
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> Recent Order History</h2>
+          </div>
+
+          <div class="table-responsive" style="overflow-x:auto;">
+            <table class="portal-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Delivery Address</th>
+                  <th>Items Count</th>
+                  <th>Total Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-orders-tbody">
+                <!-- Dynamic Orders -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Dynamic Dashboard Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. Guard Protection Check
+      const isAuth = sessionStorage.getItem("aura_user_auth") === "true";
+      const currentUser = JSON.parse(sessionStorage.getItem("aura_current_user"));
+
+      if (!isAuth || !currentUser) {
+        alert("🔒 Access Denied! Please login to open your customer dashboard.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      // Load dynamic Settings (such as store name)
+      const settings = Object.assign({
+        storeName: "AuraStore",
+        currency: "$"
+      }, JSON.parse(localStorage.getItem("aura_settings")) || {});
+      
+      const logoEl = document.querySelector(".brand-logo .logo-text");
+      if (logoEl && settings.storeName) {
+        const name = settings.storeName;
+        if (name.toLowerCase().endsWith("store") && name.toLowerCase() !== "store") {
+          const base = name.substring(0, name.toLowerCase().lastIndexOf("store"));
+          logoEl.innerHTML = `${base}<span>Store</span>`;
+        } else {
+          logoEl.innerHTML = name;
+        }
+      }
+
+      // 2. Load User Profile Info
+      document.getElementById("user-display-name").textContent = currentUser.username;
+      document.getElementById("detail-username").textContent = `@${currentUser.username}`;
+      document.getElementById("detail-phone").textContent = `+${currentUser.wpNumber}`;
+      
+      const initialsEl = document.getElementById("user-avatar-initials");
+      if (currentUser.avatar) {
+        initialsEl.textContent = "";
+        initialsEl.style.backgroundImage = `url(${currentUser.avatar})`;
+      } else {
+        const initials = currentUser.username.substring(0, 2).toUpperCase();
+        initialsEl.textContent = initials;
+      }
+
+      const regDate = currentUser.registeredAt ? new Date(currentUser.registeredAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : "August 2026";
+      document.getElementById("detail-registered-date").textContent = regDate;
+
+      // 3. Load Wishlist Details
+      renderDashboardWishlist(settings.currency);
+
+      // 4. Load Order History
+      renderDashboardOrders(currentUser.username, settings.currency);
+
+      // 5. Logout Listener
+      document.getElementById("btn-logout").addEventListener("click", () => {
+        if (confirm("Are you sure you want to logout?")) {
+          sessionStorage.removeItem("aura_user_auth");
+          sessionStorage.removeItem("aura_current_user");
+          window.location.href = "index.html";
+        }
+      });
+
+      // 6. Photo Upload Listeners
+      const changeAvatarBtn = document.getElementById("btn-change-avatar");
+      const avatarInput = document.getElementById("user-avatar-input");
+
+      if (changeAvatarBtn && avatarInput) {
+        changeAvatarBtn.addEventListener("click", () => {
+          avatarInput.click();
+        });
+
+        avatarInput.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          // Limit file size to 1.5MB to prevent localStorage exceeding 5MB limits
+          if (file.size > 1.5 * 1024 * 1024) {
+            alert("❌ File size too large! Please choose an image smaller than 1.5MB.");
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = function(evt) {
+            const base64Url = evt.target.result;
+            
+            // Update session storage state
+            currentUser.avatar = base64Url;
+            sessionStorage.setItem("aura_current_user", JSON.stringify(currentUser));
+
+            // Update local storage persistent state
+            const users = JSON.parse(localStorage.getItem("aura_users")) || [];
+            const userIndex = users.findIndex(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
+            if (userIndex > -1) {
+              users[userIndex].avatar = base64Url;
+              localStorage.setItem("aura_users", JSON.stringify(users));
+            }
+
+            // Render updated avatar
+            initialsEl.textContent = "";
+            initialsEl.style.backgroundImage = `url(${base64Url})`;
+
+            showDashboardToast("Profile photo updated successfully!", "success");
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    });
+
+    function renderDashboardWishlist(currencySymbol) {
+      const container = document.getElementById("dashboard-wishlist-container");
+      const countEl = document.getElementById("wishlist-count");
+      
+      const storefrontWishlist = JSON.parse(localStorage.getItem("aura_wishlist")) || [];
+      countEl.textContent = storefrontWishlist.length;
+
+      if (storefrontWishlist.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:2rem 0; font-size:0.92rem;"><i class="fa-regular fa-heart" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>Your wishlist is currently empty.</p>`;
+        return;
+      }
+
+      // Load products catalog list to expand detail details
+      const products = JSON.parse(localStorage.getItem("aura_products")) || [];
+
+      // Render wishlist grid elements
+      container.innerHTML = storefrontWishlist.map(productId => {
+        const prod = products.find(p => p.id === productId);
+        if (!prod) return "";
+
+        return `
+          <div class="wishlist-item-card" id="wish-card-${prod.id}">
+            <img src="${prod.image}" alt="${prod.title}" class="wishlist-item-img" onerror="this.src='https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80'">
+            <div class="wishlist-item-details">
+              <h4 class="wishlist-item-title">${prod.title}</h4>
+              <span class="wishlist-item-price">${currencySymbol}${prod.price.toFixed(2)}</span>
+            </div>
+            <div class="wishlist-item-actions">
+              <button class="btn btn-primary" style="padding:0.5rem 0.8rem; font-size:0.8rem;" onclick="addWishToCart('${prod.id}')">
+                <i class="fa-solid fa-cart-plus"></i> <span class="cart-btn-text">Add to Cart</span>
+              </button>
+              <button class="icon-btn" style="width:34px; height:34px; background:rgba(239,68,68,0.08); border-color:rgba(239,68,68,0.2); color:#ef4444;" onclick="removeWish('${prod.id}')">
+                <i class="fa-solid fa-trash-can" style="font-size:0.85rem;"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function removeWish(productId) {
+      let wishlist = JSON.parse(localStorage.getItem("aura_wishlist")) || [];
+      wishlist = wishlist.filter(id => id !== productId);
+      localStorage.setItem("aura_wishlist", JSON.stringify(wishlist));
+      
+      // Update UI
+      const card = document.getElementById(`wish-card-${productId}`);
+      if (card) {
+        card.style.opacity = "0";
+        card.style.transform = "scale(0.9)";
+        setTimeout(() => {
+          renderDashboardWishlist(localStorage.getItem("aura_currency") || "$");
+        }, 300);
+      }
+      showDashboardToast("Item removed from your wishlist", "info");
+    }
+
+    function addWishToCart(productId) {
+      let cart = JSON.parse(localStorage.getItem("aura_cart")) || [];
+      const products = JSON.parse(localStorage.getItem("aura_products")) || [];
+      const prod = products.find(p => p.id === productId);
+
+      if (!prod) return;
+
+      const existingIndex = cart.findIndex(item => item.id === productId);
+      if (existingIndex > -1) {
+        cart[existingIndex].quantity += 1;
+      } else {
+        cart.push({
+          id: prod.id,
+          title: prod.title,
+          price: prod.price,
+          image: prod.image,
+          category: prod.category,
+          quantity: 1
+        });
+      }
+
+      localStorage.setItem("aura_cart", JSON.stringify(cart));
+      showDashboardToast(`"${prod.title}" added to your cart!`, "success");
+    }
+
+    function renderDashboardOrders(username, currencySymbol) {
+      const tbody = document.getElementById("dashboard-orders-tbody");
+      const orders = JSON.parse(localStorage.getItem(`aura_orders_${username}`)) || [];
+
+      if (orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">No orders placed yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = orders.map(ord => {
+        const dateStr = new Date(ord.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+        return `
+          <tr>
+            <td><strong>#${ord.id}</strong></td>
+            <td>${dateStr}</td>
+            <td>${ord.address}</td>
+            <td>${ord.itemsCount} items</td>
+            <td><strong>${currencySymbol}${ord.totalAmount.toFixed(2)}</strong></td>
+            <td><span class="order-status-badge status-submitted">${ord.status}</span></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function showDashboardToast(message, type = "info") {
+      const container = document.getElementById("toast-container");
+      if (!container) return;
+
+      const toast = document.createElement("div");
+      toast.className = `toast toast-${type}`;
+      
+      const icon = type === "success" ? "fa-circle-check" : "fa-info-circle";
+      toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.remove();
+      }, 3500);
+    }
+  </script>
+</body>
+</html>
