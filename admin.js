@@ -26,12 +26,12 @@ let adminState = {
 
   // Load settings
   adminState.settings = Object.assign({
-    whatsappNumber: "923281142856",
-    currency: "$",
+    whatsappNumber: "923170690308",
+    currency: "Rs",
     storeName: "Smart Choice",
     googleSheetUrl: "",
     adminEmail: "",
-    footerPhone: "+1 (555) 123-4567",
+    footerPhone: "+92 317 0690308",
     footerEmail: "support@aurastore.com",
     footerAddress: "123 Storefront Ave, Retail District, CA 90210",
     footerFacebook: "#",
