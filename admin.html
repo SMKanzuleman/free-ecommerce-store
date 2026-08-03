@@ -259,6 +259,14 @@
       color: var(--text-muted);
     }
 
+    .table-responsive {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 1rem;
+    }
+
     /* Product Management Table */
     .admin-table {
       width: 100%;
@@ -299,7 +307,7 @@
 
     @media (max-width: 900px) {
       .dashboard-wrapper-card {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         min-height: auto;
       }
       .dashboard-sidebar {
@@ -360,7 +368,7 @@
         <button id="admin-theme-toggle" class="icon-btn" title="Toggle Dark/Light Mode">
           <i class="fa-solid fa-moon"></i>
         </button>
-        <a href="index.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back to Storefront</a>
+        <a href="index.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back</a>
         <button id="admin-logout-btn" class="btn btn-primary" style="background:#ef4444; border:none;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
       </div>
     </div>
@@ -397,10 +405,8 @@
       <!-- TAB 1: OVERVIEW -->
       <div class="admin-panel active" id="panel-overview">
         <div class="admin-card-header">
-          <h2><i class="fa-solid fa-chart-pie"></i> Store Dashboard Overview</h2>
-          <button class="btn btn-primary" onclick="switchTab('panel-add-product')">
-            <i class="fa-solid fa-plus"></i> Add New Product
-          </button>
+          <h2><i class="fa-solid fa-chart-pie"></i> Dashboard</h2>
+
         </div>
 
         <div class="stats-row">
@@ -513,7 +519,7 @@
       <!-- TAB 3: MANAGE PRODUCTS -->
       <div class="admin-panel hidden" id="panel-manage-products">
         <div class="admin-card-header">
-          <h2><i class="fa-solid fa-boxes-stacked"></i> Manage Inventory (<span id="manage-count">0</span>)</h2>
+          <h2><i class="fa-solid fa-boxes-stacked"></i>Inventory (<span id="manage-count">0</span>)</h2>
         </div>
 
         <div class="table-responsive" style="overflow-x:auto;">
