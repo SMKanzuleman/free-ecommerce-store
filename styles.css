@@ -558,9 +558,11 @@ body::after {
 .hero-image-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 210px 210px;
-  gap: 1.25rem;
+  grid-template-rows: 150px 150px;
+  gap: 1rem;
   position: relative;
+  max-width: 380px;
+  margin: 0 auto;
 }
 
 .hero-img-card {
@@ -582,11 +584,11 @@ body::after {
 
 .cosmetics-card {
   grid-row: span 2;
-  height: 432px;
+  height: 100%;
 }
 
 .tech-card, .clothing-card {
-  height: 210px;
+  height: 100%;
 }
 
 .hero-card-img {
@@ -1475,8 +1477,8 @@ input[type="range"] {
 @media (max-width: 640px) {
   .modal-card {
     padding: 1.25rem;
-    height: 70vh;
-    max-height: 70vh;
+    height: 85vh;
+    max-height: 85vh;
     overflow: hidden;
   }
   .product-modal-grid {
@@ -1547,6 +1549,7 @@ input[type="range"] {
   justify-content: center;
   font-size: 1.1rem;
   transition: var(--transition);
+  z-index: 50;
 }
 
 .close-modal-btn:hover {
@@ -1784,9 +1787,10 @@ input[type="range"] {
     gap: 1rem;
   }
   .filter-left-group {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.85rem;
+    flex-wrap: wrap;
     width: 100%;
   }
   .category-buttons {
@@ -1807,6 +1811,20 @@ input[type="range"] {
   }
   .nav-container .brand-logo {
     display: none !important;
+  }
+  .cat-btn {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.6rem;
+    gap: 0.3rem;
+  }
+  .filter-heading-label {
+    font-size: 0.85rem;
+  }
+  .category-buttons {
+    gap: 0.35rem;
+  }
+  .filter-left-group {
+    gap: 0.4rem;
   }
 }
 

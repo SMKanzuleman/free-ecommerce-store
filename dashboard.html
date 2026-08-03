@@ -60,6 +60,9 @@
       padding: 2.2rem;
       box-shadow: var(--shadow-md);
       text-align: center;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     .user-avatar-wrapper {
@@ -156,6 +159,9 @@
       padding: 2.2rem;
       box-shadow: var(--shadow-md);
       margin-bottom: 2.2rem;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     .portal-section-header {
@@ -270,7 +276,33 @@
 
     @media (max-width: 900px) {
       .dashboard-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.5rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .dashboard-nav-container {
+        flex-direction: column;
+        gap: 0.85rem;
+        align-items: center;
+      }
+      .dashboard-navbar .brand-logo {
+        display: none !important;
+      }
+      .dashboard-main-container {
+        padding-top: 1.5rem;
+      }
+      .portal-section-card, .user-profile-card {
+        padding: 1.25rem;
+      }
+      .portal-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+      .portal-table {
+        min-width: 680px;
       }
     }
   </style>
@@ -374,6 +406,8 @@
 
   <!-- Dynamic Dashboard Script -->
   <script>
+    let isWishlistExpanded = false;
+
     document.addEventListener("DOMContentLoaded", () => {
       // 1. Guard Protection Check
       const isAuth = sessionStorage.getItem("aura_user_auth") === "true";
@@ -489,14 +523,20 @@
 
       if (storefrontWishlist.length === 0) {
         container.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:2rem 0; font-size:0.92rem;"><i class="fa-regular fa-heart" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>Your wishlist is currently empty.</p>`;
+        const oldBtn = document.getElementById("btn-wishlist-load-more");
+        if (oldBtn) oldBtn.remove();
         return;
       }
 
       // Load products catalog list to expand detail details
       const products = JSON.parse(localStorage.getItem("aura_products")) || [];
 
+      // Pagination check: show only 3 by default unless expanded
+      const shouldShowLoadMore = storefrontWishlist.length > 3 && !isWishlistExpanded;
+      const itemsToRender = shouldShowLoadMore ? storefrontWishlist.slice(0, 3) : storefrontWishlist;
+
       // Render wishlist grid elements
-      container.innerHTML = storefrontWishlist.map(productId => {
+      container.innerHTML = itemsToRender.map(productId => {
         const prod = products.find(p => p.id === productId);
         if (!prod) return "";
 
@@ -518,6 +558,32 @@
           </div>
         `;
       }).join("");
+
+      // Manage Load More button render
+      let loadMoreBtn = document.getElementById("btn-wishlist-load-more");
+      if (shouldShowLoadMore) {
+        if (!loadMoreBtn) {
+          loadMoreBtn = document.createElement("button");
+          loadMoreBtn.id = "btn-wishlist-load-more";
+          loadMoreBtn.className = "btn btn-secondary";
+          loadMoreBtn.style.width = "100%";
+          loadMoreBtn.style.justifyContent = "center";
+          loadMoreBtn.style.marginTop = "1rem";
+          loadMoreBtn.innerHTML = `<i class="fa-solid fa-angles-down"></i> Load More (${storefrontWishlist.length - 3} remaining)`;
+          loadMoreBtn.onclick = () => {
+            isWishlistExpanded = true;
+            renderDashboardWishlist(currencySymbol);
+          };
+          container.parentNode.appendChild(loadMoreBtn);
+        } else {
+          loadMoreBtn.classList.remove("hidden");
+          loadMoreBtn.innerHTML = `<i class="fa-solid fa-angles-down"></i> Load More (${storefrontWishlist.length - 3} remaining)`;
+        }
+      } else {
+        if (loadMoreBtn) {
+          loadMoreBtn.remove(); // Cleanly remove when fully loaded or empty
+        }
+      }
     }
 
     function removeWish(productId) {

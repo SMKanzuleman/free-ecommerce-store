@@ -318,6 +318,29 @@
         grid-template-columns: 1fr;
       }
     }
+
+    @media (max-width: 768px) {
+      .admin-nav-container {
+        flex-direction: column;
+        gap: 0.85rem;
+        align-items: center;
+      }
+      .admin-navbar .brand-logo {
+        display: none !important;
+      }
+      .admin-main-container {
+        padding-top: 1.5rem;
+      }
+      .admin-table {
+        min-width: 680px;
+      }
+      .dashboard-main-content {
+        padding: 1.25rem;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body class="admin-page-body">
