@@ -115,11 +115,19 @@ const INITIAL_PRODUCTS = [
   }
 ];
 
+function getWishlistKey() {
+  const currentUser = JSON.parse(sessionStorage.getItem("aura_current_user"));
+  if (currentUser && currentUser.username) {
+    return `aura_wishlist_${currentUser.username.toLowerCase()}`;
+  }
+  return "aura_wishlist_guest";
+}
+
 // App State
 let state = {
   products: JSON.parse(localStorage.getItem("aura_products")) || INITIAL_PRODUCTS,
   cart: JSON.parse(localStorage.getItem("aura_cart")) || [],
-  wishlist: JSON.parse(localStorage.getItem("aura_wishlist")) || [],
+  wishlist: JSON.parse(localStorage.getItem(getWishlistKey())) || [],
   settings: Object.assign({
     whatsappNumber: "15551234567",
     currency: "$",
@@ -641,7 +649,7 @@ function toggleWishlist(productId) {
     state.wishlist.push(productId);
     showToast("Saved to wishlist!", "success");
   }
-  localStorage.setItem("aura_wishlist", JSON.stringify(state.wishlist));
+  localStorage.setItem(getWishlistKey(), JSON.stringify(state.wishlist));
   updateWishlistUI();
   renderProducts();
 }

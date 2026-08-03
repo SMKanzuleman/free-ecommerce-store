@@ -408,6 +408,14 @@
   <script>
     let isWishlistExpanded = false;
 
+    function getWishlistKey() {
+      const currentUser = JSON.parse(sessionStorage.getItem("aura_current_user"));
+      if (currentUser && currentUser.username) {
+        return `aura_wishlist_${currentUser.username.toLowerCase()}`;
+      }
+      return "aura_wishlist_guest";
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       // 1. Guard Protection Check
       const isAuth = sessionStorage.getItem("aura_user_auth") === "true";
@@ -518,7 +526,7 @@
       const container = document.getElementById("dashboard-wishlist-container");
       const countEl = document.getElementById("wishlist-count");
       
-      const storefrontWishlist = JSON.parse(localStorage.getItem("aura_wishlist")) || [];
+      const storefrontWishlist = JSON.parse(localStorage.getItem(getWishlistKey())) || [];
       countEl.textContent = storefrontWishlist.length;
 
       if (storefrontWishlist.length === 0) {
@@ -587,9 +595,10 @@
     }
 
     function removeWish(productId) {
-      let wishlist = JSON.parse(localStorage.getItem("aura_wishlist")) || [];
+      const wishlistKey = getWishlistKey();
+      let wishlist = JSON.parse(localStorage.getItem(wishlistKey)) || [];
       wishlist = wishlist.filter(id => id !== productId);
-      localStorage.setItem("aura_wishlist", JSON.stringify(wishlist));
+      localStorage.setItem(wishlistKey, JSON.stringify(wishlist));
       
       // Update UI
       const card = document.getElementById(`wish-card-${productId}`);
