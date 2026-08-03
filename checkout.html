@@ -363,11 +363,11 @@
   <div class="toast-container" id="toast-container"></div>
 
   <script>
-    const GOOGLE_SHEET_URL = state.settings.googleSheetUrl;
     let state = {
       cart: JSON.parse(localStorage.getItem("aura_cart")) || [],
       settings: JSON.parse(localStorage.getItem("aura_settings")) || { whatsappNumber: "15551234567", currency: "$", storeName: "AuraStore" }
     };
+    const GOOGLE_SHEET_URL = state.settings.googleSheetUrl;
 
       document.addEventListener("DOMContentLoaded", () => {
       // Dynamic store name logo update
