@@ -355,8 +355,8 @@
     document.addEventListener("DOMContentLoaded", () => {
       // Load dynamic Settings (such as store name) on logo
       const settings = Object.assign({
-        storeName: "AuraStore",
-        googleSheetUrl: ""
+        storeName: "Smart Choice",
+        googleSheetUrl: "https://script.google.com/macros/s/AKfycbzNVqb1nfvuHLqupdtIJu8axAp6JPf6iYN0AfO_fzfqUiPnStg9hlaTsthEJqOoTKbjlg/exec"
       }, JSON.parse(localStorage.getItem("aura_settings")) || {});
       const GOOGLE_SHEET_URL = settings.googleSheetUrl;
 

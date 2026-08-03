@@ -29,7 +29,7 @@ let adminState = {
     whatsappNumber: "923170690308",
     currency: "Rs",
     storeName: "Smart Choice",
-    googleSheetUrl: "",
+    googleSheetUrl: "https://script.google.com/macros/s/AKfycbzNVqb1nfvuHLqupdtIJu8axAp6JPf6iYN0AfO_fzfqUiPnStg9hlaTsthEJqOoTKbjlg/exec",
     adminEmail: "",
     footerPhone: "+92 317 0690308",
     footerEmail: "support@aurastore.com",

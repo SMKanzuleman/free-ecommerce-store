@@ -365,7 +365,7 @@
   <script>
     let state = {
       cart: JSON.parse(localStorage.getItem("aura_cart")) || [],
-      settings: JSON.parse(localStorage.getItem("aura_settings")) || { whatsappNumber: "923170690308", currency: "Rs", storeName: "Smart Choice" }
+      settings: JSON.parse(localStorage.getItem("aura_settings")) || { whatsappNumber: "923170690308", currency: "Rs", storeName: "Smart Choice", googleSheetUrl: "https://script.google.com/macros/s/AKfycbzNVqb1nfvuHLqupdtIJu8axAp6JPf6iYN0AfO_fzfqUiPnStg9hlaTsthEJqOoTKbjlg/exec" }
     };
     const GOOGLE_SHEET_URL = state.settings.googleSheetUrl;
 
