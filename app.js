@@ -129,9 +129,9 @@ let state = {
   cart: JSON.parse(localStorage.getItem("aura_cart")) || [],
   wishlist: JSON.parse(localStorage.getItem(getWishlistKey())) || [],
   settings: Object.assign({
-    whatsappNumber: "15551234567",
+    whatsappNumber: "923281142856",
     currency: "$",
-    storeName: "AuraStore",
+    storeName: "Smart Choice",
     googleSheetUrl: "",
     footerPhone: "+1 (555) 123-4567",
     footerEmail: "support@aurastore.com",
