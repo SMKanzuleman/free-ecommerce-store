@@ -26,12 +26,12 @@ let adminState = {
 
   // Load settings
   adminState.settings = Object.assign({
-    whatsappNumber: "923170690308",
+    whatsappNumber: "+923017062739",
     currency: "Rs",
     storeName: "Smart Choice",
     googleSheetUrl: "https://script.google.com/macros/s/AKfycbzNVqb1nfvuHLqupdtIJu8axAp6JPf6iYN0AfO_fzfqUiPnStg9hlaTsthEJqOoTKbjlg/exec",
     adminEmail: "",
-    footerPhone: "+92 317 0690308",
+    footerPhone: "+92 301 7062739",
     footerEmail: "support@aurastore.com",
     footerAddress: "123 Storefront Ave, Retail District, CA 90210",
     footerFacebook: "#",
@@ -39,7 +39,8 @@ let adminState = {
     footerTwitter: "#",
     footerPinterest: "#",
     footerDesc: "Your ultimate destination for premium cosmetics, cutting-edge tech, and modern clothing. Built 100% free with no hidden hosting or card verification fees.",
-    footerCopyright: "&copy; 2026 AuraStore. All rights reserved. Zero Card Verification Fees. Zero Hosting Costs."
+    footerCopyright: "&copy; 2026 AuraStore. All rights reserved. Zero Card Verification Fees. Zero Hosting Costs.",
+    deliveryCharges: 250
   }, JSON.parse(localStorage.getItem("aura_settings")) || {});
 })();
 
@@ -63,6 +64,7 @@ function initAdminDashboard() {
   set("setting-whatsapp", s.whatsappNumber);
   set("setting-store-name", s.storeName);
   set("setting-currency", s.currency);
+  set("setting-delivery-charges", s.deliveryCharges);
   set("setting-admin-email", s.adminEmail);
   set("setting-footer-desc", s.footerDesc);
   set("setting-footer-email", s.footerEmail);
@@ -404,6 +406,7 @@ function handleSaveSettings(e) {
   const num = document.getElementById("setting-whatsapp").value.trim().replace(/\+/g, "");
   const storeName = document.getElementById("setting-store-name").value.trim() || "AuraStore";
   const currency = document.getElementById("setting-currency").value.trim() || "$";
+  const deliveryCharges = parseFloat(document.getElementById("setting-delivery-charges").value.trim()) || 0;
   const adminEmail = document.getElementById("setting-admin-email").value.trim();
   const sheetUrlEl = document.getElementById("setting-google-sheet-url");
   const sheetUrl = sheetUrlEl ? sheetUrlEl.value.trim() : "";
@@ -413,6 +416,7 @@ function handleSaveSettings(e) {
   adminState.settings.whatsappNumber = num;
   adminState.settings.storeName = storeName;
   adminState.settings.currency = currency;
+  adminState.settings.deliveryCharges = deliveryCharges;
   adminState.settings.adminEmail = adminEmail;
   adminState.settings.googleSheetUrl = sheetUrl;
 

@@ -129,11 +129,11 @@ let state = {
   cart: JSON.parse(localStorage.getItem("aura_cart")) || [],
   wishlist: JSON.parse(localStorage.getItem(getWishlistKey())) || [],
   settings: Object.assign({
-    whatsappNumber: "923170690308",
+    whatsappNumber: "+923017062739",
     currency: "Rs",
     storeName: "Smart Choice",
     googleSheetUrl: "https://script.google.com/macros/s/AKfycbzNVqb1nfvuHLqupdtIJu8axAp6JPf6iYN0AfO_fzfqUiPnStg9hlaTsthEJqOoTKbjlg/exec",
-    footerPhone: "+92 317 0690308",
+    footerPhone: "+92 301 7062739",
     footerEmail: "support@aurastore.com",
     footerAddress: "123 Storefront Ave, Retail District, CA 90210",
     footerFacebook: "#",
@@ -141,7 +141,8 @@ let state = {
     footerTwitter: "#",
     footerPinterest: "#",
     footerDesc: "Your ultimate destination for premium cosmetics, cutting-edge tech, and modern clothing. Built 100% free with no hidden hosting or card verification fees.",
-    footerCopyright: "&copy; 2026 AuraStore. All rights reserved. Zero Card Verification Fees. Zero Hosting Costs."
+    footerCopyright: "&copy; 2026 AuraStore. All rights reserved. Zero Card Verification Fees. Zero Hosting Costs.",
+    deliveryCharges: 250
   }, JSON.parse(localStorage.getItem("aura_settings")) || {}),
   filters: {
     category: "all",
@@ -173,6 +174,7 @@ const cartDrawer = document.getElementById("cart-drawer");
 const closeCartBtn = document.getElementById("close-cart-btn");
 const cartItemsContainer = document.getElementById("cart-items");
 const cartSubtotalEl = document.getElementById("cart-subtotal");
+const cartShippingEl = document.getElementById("cart-shipping");
 const cartTotalEl = document.getElementById("cart-total");
 const proceedCheckoutBtn = document.getElementById("proceed-checkout-btn");
 
@@ -598,8 +600,20 @@ function updateCartUI() {
   cartCount.textContent = totalItems;
 
   const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shipping = subtotal > 0 ? (parseFloat(state.settings.deliveryCharges) || 0) : 0;
+  const total = subtotal + shipping;
+
   cartSubtotalEl.textContent = `${state.settings.currency}${subtotal.toFixed(2)}`;
-  cartTotalEl.textContent = `${state.settings.currency}${subtotal.toFixed(2)}`;
+  if (cartShippingEl) {
+    if (shipping === 0) {
+      cartShippingEl.textContent = "FREE";
+      cartShippingEl.className = "free-tag";
+    } else {
+      cartShippingEl.textContent = `${state.settings.currency}${shipping.toFixed(2)}`;
+      cartShippingEl.className = "";
+    }
+  }
+  cartTotalEl.textContent = `${state.settings.currency}${total.toFixed(2)}`;
 
   if (state.cart.length === 0) {
     cartItemsContainer.innerHTML = `
@@ -703,14 +717,22 @@ function openProductModal(productId) {
 // Checkout & WhatsApp Order Submission
 function openCheckoutModal() {
   const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shipping = subtotal > 0 ? (parseFloat(state.settings.deliveryCharges) || 0) : 0;
+  const total = subtotal + shipping;
   const method = checkoutMethodSelect.value;
   
   orderSummaryBox.innerHTML = `
     <h4>Order Summary (${state.cart.length} items)</h4>
     <div style="font-size:0.9rem; margin-top:0.4rem;">
       ${state.cart.map(i => `<div>${i.quantity}x ${i.title} (${state.settings.currency}${(i.price * i.quantity).toFixed(2)})</div>`).join("")}
-      <div style="font-weight:800; font-size:1.1rem; margin-top:0.5rem; text-align:right;">
-        Total: ${state.settings.currency}${subtotal.toFixed(2)}
+      <div style="margin-top: 0.5rem; text-align: right; font-size: 0.95rem;">
+        Subtotal: ${state.settings.currency}${subtotal.toFixed(2)}
+      </div>
+      <div style="text-align: right; font-size: 0.95rem;">
+        Delivery: ${shipping > 0 ? `${state.settings.currency}${shipping.toFixed(2)}` : 'FREE'}
+      </div>
+      <div style="font-weight:800; font-size:1.1rem; margin-top:0.25rem; text-align:right;">
+        Total: ${state.settings.currency}${total.toFixed(2)}
       </div>
       <div style="font-size:0.8rem; color:var(--primary); margin-top:0.3rem;">
         Order Method: <strong>${method.toUpperCase()}</strong> (No Credit Card Verification)
@@ -730,6 +752,8 @@ function handleOrderSubmit(e) {
   const method = checkoutMethodSelect.value;
 
   const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shipping = subtotal > 0 ? (parseFloat(state.settings.deliveryCharges) || 0) : 0;
+  const total = subtotal + shipping;
 
   if (method === "whatsapp") {
     let msg = `🛒 *NEW ORDER - ${state.settings.storeName.toUpperCase()}*\n\n`;
@@ -743,7 +767,9 @@ function handleOrderSubmit(e) {
       msg += `${index + 1}. [${item.category.toUpperCase()}] ${item.title} x${item.quantity} - ${state.settings.currency}${(item.price * item.quantity).toFixed(2)}\n`;
     });
 
-    msg += `\n💰 *Total Amount:* ${state.settings.currency}${subtotal.toFixed(2)}\n`;
+    msg += `\n💰 *Subtotal:* ${state.settings.currency}${subtotal.toFixed(2)}\n`;
+    msg += `🚚 *Delivery Charges:* ${shipping > 0 ? `${state.settings.currency}${shipping.toFixed(2)}` : 'FREE'}\n`;
+    msg += `💵 *Total Amount:* ${state.settings.currency}${total.toFixed(2)}\n`;
     msg += `✨ *Payment:* Direct Order / WhatsApp`;
 
     const whatsappUrl = `https://wa.me/${state.settings.whatsappNumber}?text=${encodeURIComponent(msg)}`;
@@ -751,7 +777,7 @@ function handleOrderSubmit(e) {
 
     showToast("Redirecting to WhatsApp to send your order!", "success");
   } else {
-    showToast(`Order placed successfully via ${method.toUpperCase()}! Total: ${state.settings.currency}${subtotal.toFixed(2)}`, "success");
+    showToast(`Order placed successfully via ${method.toUpperCase()}! Total: ${state.settings.currency}${total.toFixed(2)}`, "success");
   }
 
   // Clear Cart
