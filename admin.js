@@ -292,7 +292,7 @@ async function handleAddProduct(e) {
           const filePath = `uploads/${uniqueName}`;
           
           await commitToGitHub(filePath, base64Data, `Upload product image: ${uniqueName}`);
-          return `/uploads/${uniqueName}`;
+          return `uploads/${uniqueName}`;
         }));
       } catch (err) {
         console.error("GitHub image upload failed, using Base64 fallback:", err);

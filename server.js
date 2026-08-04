@@ -89,7 +89,7 @@ const server = http.createServer((req, res) => {
           
           const uniqueName = `img-${Date.now()}-${idx}.${ext}`;
           fs.writeFileSync(path.join(UPLOADS_DIR, uniqueName), buffer);
-          urls.push(`/uploads/${uniqueName}`);
+          urls.push(`uploads/${uniqueName}`);
         });
 
         res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
