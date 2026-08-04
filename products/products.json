@@ -1,1 +1,107 @@
-[]
+[
+  {
+    "id": "tech-1785832804524",
+    "title": "React Kit",
+    "category": "tech",
+    "price": 23,
+    "oldPrice": 100,
+    "rating": 5,
+    "reviews": 1,
+    "badge": "New",
+    "images": [
+      "/uploads/img-1785832801541-0.png"
+    ],
+    "image": "/uploads/img-1785832801541-0.png",
+    "description": "adsadsasdasdasdasdasd"
+  },
+  {
+    "id": "tech-1",
+    "title": "Wireless ANC Noise-Canceling Headphones",
+    "category": "tech",
+    "price": 129.99,
+    "oldPrice": 179.99,
+    "rating": 4.8,
+    "reviews": 215,
+    "badge": "Top Rated",
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
+    "description": "Immersive studio-quality sound, active noise cancellation, 40-hour battery life, and comfortable ear cushions.",
+    "images": [
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80"
+    ]
+  },
+  {
+    "id": "tech-2",
+    "title": "Ergonomic RGB Mechanical Keyboard",
+    "category": "tech",
+    "price": 99.5,
+    "oldPrice": 135,
+    "rating": 4.9,
+    "reviews": 140,
+    "badge": "Hot",
+    "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80",
+    "description": "Wireless mechanical keyboard with tactile blue switches, customizable RGB backlighting, and aluminum body.",
+    "images": [
+      "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80"
+    ]
+  },
+  {
+    "id": "tech-3",
+    "title": "Minimalist Smart Watch with Fitness Tracker",
+    "category": "tech",
+    "price": 84.99,
+    "oldPrice": 110,
+    "rating": 4.6,
+    "reviews": 88,
+    "badge": "Sale",
+    "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80",
+    "description": "Tracks heart rate, sleep metrics, workout activity, and smartphone notifications with 7-day battery life.",
+    "images": [
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80"
+    ]
+  },
+  {
+    "id": "clothing-1",
+    "title": "Urban Oversized Heavyweight Cotton Hoodie",
+    "category": "clothing",
+    "price": 54.99,
+    "oldPrice": 75,
+    "rating": 4.9,
+    "reviews": 156,
+    "badge": "Popular",
+    "image": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80",
+    "description": "Premium 450gsm organic cotton hoodie featuring a fleece lining, drop shoulders, and relaxed street fit.",
+    "images": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80"
+    ]
+  },
+  {
+    "id": "clothing-2",
+    "title": "Vintage Washed Denim Trucker Jacket",
+    "category": "clothing",
+    "price": 69,
+    "oldPrice": 95,
+    "rating": 4.7,
+    "reviews": 104,
+    "badge": "Classic",
+    "image": "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=600&q=80",
+    "description": "Durable cotton denim jacket with antique brass buttons, twin chest pockets, and timeless washed aesthetic.",
+    "images": [
+      "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=600&q=80"
+    ]
+  },
+  {
+    "id": "clothing-3",
+    "title": "Minimalist Leather Low-Top Sneakers",
+    "category": "clothing",
+    "price": 89.99,
+    "oldPrice": 120,
+    "rating": 4.8,
+    "reviews": 130,
+    "badge": "Must Have",
+    "image": "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80",
+    "description": "Handcrafted full-grain leather sneakers with cushioned insoles and durable rubber outsoles for all-day comfort.",
+    "images": [
+      "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80"
+    ]
+  }
+]
