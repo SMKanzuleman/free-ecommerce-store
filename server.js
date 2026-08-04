@@ -76,7 +76,7 @@ const server = http.createServer((req, res) => {
         payload.images.forEach((img, idx) => {
           if (!img.data) return;
 
-          const match = img.data.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+          const match = img.data.match(/^data:image\/([^;]+);base64,(.+)$/s);
           if (!match) return;
 
           let ext = match[1];
@@ -84,7 +84,7 @@ const server = http.createServer((req, res) => {
           if (ext === 'svg+xml') ext = 'svg';
           ext = ext.replace(/[^a-zA-Z0-9]/g, '');
 
-          const base64Data = match[2];
+          const base64Data = match[2].trim();
           const buffer = Buffer.from(base64Data, 'base64');
           
           const uniqueName = `img-${Date.now()}-${idx}.${ext}`;

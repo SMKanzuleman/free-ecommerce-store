@@ -1,119 +1,5 @@
 // Initial Demo Catalog focused strictly on Cosmetics, Tech, and Clothing
-const INITIAL_PRODUCTS = [
-  // COSMETICS
-  {
-    id: "cosmetics-1",
-    title: "Radiant Vitamin C Glow Serum",
-    category: "cosmetics",
-    price: 34.99,
-    oldPrice: 48.00,
-    rating: 4.9,
-    reviews: 184,
-    badge: "Bestseller",
-    image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80",
-    description: "Hydrating antioxidant face serum enriched with pure Vitamin C, hyaluronic acid, and botanical extracts for glowing skin."
-  },
-  {
-    id: "cosmetics-2",
-    title: "Velvet Matte Weightless Lipstick",
-    category: "cosmetics",
-    price: 22.00,
-    oldPrice: 28.00,
-    rating: 4.7,
-    reviews: 92,
-    badge: "Trending",
-    image: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=600&q=80",
-    description: "Long-lasting, non-drying matte lipstick infused with jojoba oil and vitamin E for smooth application."
-  },
-  {
-    id: "cosmetics-3",
-    title: "Nourishing Botanical Lip & Body Oil",
-    category: "cosmetics",
-    price: 18.50,
-    oldPrice: 24.00,
-    rating: 4.8,
-    reviews: 67,
-    badge: "New",
-    image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80",
-    description: "Ultra-hydrating essential oil blend designed to restore moisture and leave skin silky soft."
-  },
-
-  // TECH
-  {
-    id: "tech-1",
-    title: "Wireless ANC Noise-Canceling Headphones",
-    category: "tech",
-    price: 129.99,
-    oldPrice: 179.99,
-    rating: 4.8,
-    reviews: 215,
-    badge: "Top Rated",
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
-    description: "Immersive studio-quality sound, active noise cancellation, 40-hour battery life, and comfortable ear cushions."
-  },
-  {
-    id: "tech-2",
-    title: "Ergonomic RGB Mechanical Keyboard",
-    category: "tech",
-    price: 99.50,
-    oldPrice: 135.00,
-    rating: 4.9,
-    reviews: 140,
-    badge: "Hot",
-    image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80",
-    description: "Wireless mechanical keyboard with tactile blue switches, customizable RGB backlighting, and aluminum body."
-  },
-  {
-    id: "tech-3",
-    title: "Minimalist Smart Watch with Fitness Tracker",
-    category: "tech",
-    price: 84.99,
-    oldPrice: 110.00,
-    rating: 4.6,
-    reviews: 88,
-    badge: "Sale",
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80",
-    description: "Tracks heart rate, sleep metrics, workout activity, and smartphone notifications with 7-day battery life."
-  },
-
-  // CLOTHING
-  {
-    id: "clothing-1",
-    title: "Urban Oversized Heavyweight Cotton Hoodie",
-    category: "clothing",
-    price: 54.99,
-    oldPrice: 75.00,
-    rating: 4.9,
-    reviews: 156,
-    badge: "Popular",
-    image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80",
-    description: "Premium 450gsm organic cotton hoodie featuring a fleece lining, drop shoulders, and relaxed street fit."
-  },
-  {
-    id: "clothing-2",
-    title: "Vintage Washed Denim Trucker Jacket",
-    category: "clothing",
-    price: 69.00,
-    oldPrice: 95.00,
-    rating: 4.7,
-    reviews: 104,
-    badge: "Classic",
-    image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=600&q=80",
-    description: "Durable cotton denim jacket with antique brass buttons, twin chest pockets, and timeless washed aesthetic."
-  },
-  {
-    id: "clothing-3",
-    title: "Minimalist Leather Low-Top Sneakers",
-    category: "clothing",
-    price: 89.99,
-    oldPrice: 120.00,
-    rating: 4.8,
-    reviews: 130,
-    badge: "Must Have",
-    image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80",
-    description: "Handcrafted full-grain leather sneakers with cushioned insoles and durable rubber outsoles for all-day comfort."
-  }
-];
+const INITIAL_PRODUCTS = [];
 
 function getWishlistKey() {
   const currentUser = JSON.parse(sessionStorage.getItem("aura_current_user"));
@@ -203,7 +89,7 @@ async function loadProductsFromServer() {
     const response = await fetch("/api/products").catch(() => fetch("products/products.json"));
     if (response && response.ok) {
       const data = await response.json();
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         state.products = data;
         localStorage.setItem("aura_products", JSON.stringify(data));
       }

@@ -54,7 +54,11 @@ async function loadState() {
     footerPinterest: "#",
     footerDesc: "Your ultimate destination for premium cosmetics, cutting-edge tech, and modern clothing. Built 100% free with no hidden hosting or card verification fees.",
     footerCopyright: "&copy; 2026 AuraStore. All rights reserved. Zero Card Verification Fees. Zero Hosting Costs.",
-    deliveryCharges: 250
+    deliveryCharges: 250,
+    githubUsername: "",
+    githubRepo: "",
+    githubToken: "",
+    githubBranch: "main"
   }, JSON.parse(localStorage.getItem("aura_settings")) || {});
 }
 
@@ -79,6 +83,10 @@ function initAdminDashboard() {
   set("setting-store-name", s.storeName);
   set("setting-currency", s.currency);
   set("setting-delivery-charges", s.deliveryCharges);
+  set("setting-github-username", s.githubUsername);
+  set("setting-github-repo", s.githubRepo);
+  set("setting-github-token", s.githubToken);
+  set("setting-github-branch", s.githubBranch || "main");
   set("setting-admin-email", s.adminEmail);
   set("setting-footer-desc", s.footerDesc);
   set("setting-footer-email", s.footerEmail);
@@ -270,22 +278,49 @@ async function handleAddProduct(e) {
       });
     }));
 
-    // Upload base64 images to server
-    try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ images: base64Objects })
-      });
-      if (response && response.ok) {
-        const resJson = await response.json();
-        if (resJson && resJson.success && Array.isArray(resJson.urls)) {
-          newImages = resJson.urls;
-        }
+    const { githubUsername, githubRepo, githubToken } = adminState.settings;
+    if (githubUsername && githubRepo && githubToken) {
+      // GitHub Mode
+      try {
+        newImages = await Promise.all(base64Objects.map(async (img, idx) => {
+          const match = img.data.match(/^data:image\/([^;]+);base64,(.+)$/s);
+          if (!match) throw new Error("Invalid image format");
+          const ext = match[1].split("+")[0].replace("jpeg", "jpg");
+          const base64Data = match[2];
+          
+          const uniqueName = `img-${Date.now()}-${idx}.${ext}`;
+          const filePath = `uploads/${uniqueName}`;
+          
+          await commitToGitHub(filePath, base64Data, `Upload product image: ${uniqueName}`);
+          return `/uploads/${uniqueName}`;
+        }));
+      } catch (err) {
+        console.error("GitHub image upload failed, using Base64 fallback:", err);
+        showAdminToast("GitHub image upload failed. Saving as Base64 fallback.", "warning");
+        newImages = base64Objects.map(obj => obj.data);
       }
-    } catch (err) {
-      console.warn("Could not upload image files to server, using Base64 fallback:", err);
-      newImages = base64Objects.map(obj => obj.data);
+    } else {
+      // Local Server Mode
+      try {
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ images: base64Objects })
+        });
+        if (response && response.ok) {
+          const resJson = await response.json();
+          if (resJson && resJson.success && Array.isArray(resJson.urls) && resJson.urls.length > 0) {
+            newImages = resJson.urls;
+          } else {
+            throw new Error("Upload response did not return any URLs");
+          }
+        } else {
+          throw new Error("HTTP error " + (response ? response.status : "unknown"));
+        }
+      } catch (err) {
+        console.warn("Could not upload image files to server, using Base64 fallback:", err);
+        newImages = base64Objects.map(obj => obj.data);
+      }
     }
   }
 
@@ -516,6 +551,16 @@ function handleSaveSettings(e) {
   adminState.settings.adminEmail = adminEmail;
   adminState.settings.googleSheetUrl = sheetUrl;
 
+  const githubUser = document.getElementById("setting-github-username").value.trim();
+  const githubRepo = document.getElementById("setting-github-repo").value.trim();
+  const githubToken = document.getElementById("setting-github-token").value.trim();
+  const githubBranch = document.getElementById("setting-github-branch").value.trim() || "main";
+
+  adminState.settings.githubUsername = githubUser;
+  adminState.settings.githubRepo = githubRepo;
+  adminState.settings.githubToken = githubToken;
+  adminState.settings.githubBranch = githubBranch;
+
   localStorage.setItem("aura_settings", JSON.stringify(adminState.settings));
   localStorage.setItem("aura_admin_pin", newPin);
 
@@ -545,22 +590,38 @@ function handleSaveFooterSettings(e) {
 async function saveProductsToStorage() {
   localStorage.setItem("aura_products", JSON.stringify(adminState.products));
 
-  try {
-    const response = await fetch("/api/products", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(adminState.products)
-    });
-    if (response && response.ok) {
-      showAdminToast("Products saved successfully to local folder products/products.json!", "success");
-    } else {
-      throw new Error("HTTP error " + response.status);
+  const { githubUsername, githubRepo, githubToken } = adminState.settings;
+  if (githubUsername && githubRepo && githubToken) {
+    // GitHub API Mode
+    try {
+      const jsonStr = JSON.stringify(adminState.products, null, 2);
+      const base64Content = btoa(unescape(encodeURIComponent(jsonStr)));
+      
+      await commitToGitHub("products/products.json", base64Content, "Update product catalog database");
+      showAdminToast("Products saved successfully to GitHub! Redeploying site...", "success");
+    } catch (error) {
+      console.error("Failed to save products to GitHub repository:", error);
+      showAdminToast("GitHub save failed! Saved to browser local storage only.", "error");
     }
-  } catch (error) {
-    console.warn("Could not write products to server:", error);
-    showAdminToast("Saved to browser local storage only. (Server not running or write failed)", "info");
+  } else {
+    // Local Server Mode
+    try {
+      const response = await fetch("/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(adminState.products)
+      });
+      if (response && response.ok) {
+        showAdminToast("Products saved successfully to local folder products/products.json!", "success");
+      } else {
+        throw new Error("HTTP error " + response.status);
+      }
+    } catch (error) {
+      console.warn("Could not write products to server:", error);
+      showAdminToast("Saved to browser local storage only. (Server not running or write failed)", "info");
+    }
   }
 }
 
@@ -589,4 +650,51 @@ function showAdminToast(message, type = "info") {
   container.appendChild(toast);
 
   setTimeout(() => toast.remove(), 3500);
+}
+
+async function commitToGitHub(filePath, contentBase64, commitMessage) {
+  const { githubUsername, githubRepo, githubToken, githubBranch } = adminState.settings;
+  if (!githubUsername || !githubRepo || !githubToken) {
+    throw new Error("GitHub credentials not configured");
+  }
+
+  const url = `https://api.github.com/repos/${githubUsername}/${githubRepo}/contents/${filePath}`;
+  
+  // 1. Get current SHA if file exists
+  let sha = null;
+  try {
+    const getRes = await fetch(`${url}?ref=${githubBranch}`, {
+      headers: {
+        "Authorization": `token ${githubToken}`
+      }
+    });
+    if (getRes.ok) {
+      const fileData = await getRes.json();
+      sha = fileData.sha;
+    }
+  } catch (e) {
+    // File doesn't exist
+  }
+
+  // 2. Commit file
+  const putRes = await fetch(url, {
+    method: "PUT",
+    headers: {
+      "Authorization": `token ${githubToken}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message: commitMessage,
+      content: contentBase64,
+      sha: sha,
+      branch: githubBranch
+    })
+  });
+
+  if (!putRes.ok) {
+    const errText = await putRes.text();
+    throw new Error(`GitHub API commit failed: ${putRes.status} ${errText}`);
+  }
+
+  return await putRes.json();
 }
