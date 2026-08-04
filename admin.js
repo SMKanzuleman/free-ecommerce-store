@@ -9,7 +9,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 let adminState = {
   products: [],
   settings: {},
-  editingProductId: null
+  editingProductId: null,
+  addedUrls: []
 };
 
 async function loadState() {
@@ -264,72 +265,14 @@ async function handleAddProduct(e) {
   const oldPriceVal = document.getElementById("prod-old-price").value;
   const oldPrice = oldPriceVal ? parseFloat(oldPriceVal) : null;
   const description = document.getElementById("prod-desc").value.trim();
-
-  // Read uploaded images
-  const fileInput = document.getElementById("prod-images");
-  let newImages = [];
-  if (fileInput && fileInput.files.length > 0) {
-    const base64Objects = await Promise.all(Array.from(fileInput.files).map(file => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve({ name: file.name, data: reader.result });
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(file);
-      });
-    }));
-
-    const { githubUsername, githubRepo, githubToken } = adminState.settings;
-    if (githubUsername && githubRepo && githubToken) {
-      // GitHub Mode
-      try {
-        newImages = await Promise.all(base64Objects.map(async (img, idx) => {
-          const match = img.data.match(/^data:image\/([^;]+);base64,(.+)$/s);
-          if (!match) throw new Error("Invalid image format");
-          const ext = match[1].split("+")[0].replace("jpeg", "jpg");
-          const base64Data = match[2];
-          
-          const uniqueName = `img-${Date.now()}-${idx}.${ext}`;
-          const filePath = `uploads/${uniqueName}`;
-          
-          await commitToGitHub(filePath, base64Data, `Upload product image: ${uniqueName}`);
-          return `uploads/${uniqueName}`;
-        }));
-      } catch (err) {
-        console.error("GitHub image upload failed, using Base64 fallback:", err);
-        showAdminToast("GitHub image upload failed. Saving as Base64 fallback.", "warning");
-        newImages = base64Objects.map(obj => obj.data);
-      }
-    } else {
-      // Local Server Mode
-      try {
-        const response = await fetch("/api/upload", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ images: base64Objects })
-        });
-        if (response && response.ok) {
-          const resJson = await response.json();
-          if (resJson && resJson.success && Array.isArray(resJson.urls) && resJson.urls.length > 0) {
-            newImages = resJson.urls;
-          } else {
-            throw new Error("Upload response did not return any URLs");
-          }
-        } else {
-          throw new Error("HTTP error " + (response ? response.status : "unknown"));
-        }
-      } catch (err) {
-        console.warn("Could not upload image files to server, using Base64 fallback:", err);
-        newImages = base64Objects.map(obj => obj.data);
-      }
-    }
-  }
-
-  const isEditing = !!adminState.editingProductId;
-
-  if (!isEditing && newImages.length === 0) {
-    showAdminToast("Please upload at least one product image.", "info");
+  if (adminState.addedUrls.length === 0) {
+    showAdminToast("Please add at least one product image URL.", "warning");
     return;
   }
+  const images = [...adminState.addedUrls];
+  const image = images[0];
+
+  const isEditing = !!adminState.editingProductId;
 
   if (isEditing) {
     // Update existing product
@@ -341,11 +284,8 @@ async function handleAddProduct(e) {
       existingProduct.price = price;
       existingProduct.oldPrice = oldPrice;
       existingProduct.description = description;
-
-      if (newImages.length > 0) {
-        existingProduct.images = newImages;
-        existingProduct.image = newImages[0];
-      }
+      existingProduct.image = image;
+      existingProduct.images = images;
 
       showAdminToast(`Product "${title}" updated successfully!`, "success");
     }
@@ -364,8 +304,8 @@ async function handleAddProduct(e) {
       rating: 5.0,
       reviews: 1,
       badge: "New",
-      images: newImages,
-      image: newImages[0],
+      images,
+      image,
       description
     };
 
@@ -386,8 +326,8 @@ async function handleAddProduct(e) {
   document.getElementById("admin-add-product-form").reset();
   handleCategorySelectChange();
   populateCategorySelect();
-  const preview = document.getElementById("prod-images-preview");
-  if (preview) preview.innerHTML = "";
+  adminState.addedUrls = [];
+  renderAddedUrls();
 
   renderOverview();
   renderManageTable();
@@ -411,6 +351,12 @@ function startEditProduct(productId) {
   const cancelBtn = document.getElementById("btn-cancel-edit");
   if (cancelBtn) cancelBtn.classList.remove("hidden");
 
+  document.getElementById("admin-add-product-form").reset();
+  handleCategorySelectChange();
+  populateCategorySelect();
+  adminState.addedUrls = prod.images && prod.images.length ? [...prod.images] : [prod.image];
+  renderAddedUrls();
+
   // Populate inputs
   document.getElementById("prod-title").value = prod.title;
   const catSelectEl = document.getElementById("prod-category-select");
@@ -421,19 +367,6 @@ function startEditProduct(productId) {
   document.getElementById("prod-price").value = prod.price;
   document.getElementById("prod-old-price").value = prod.oldPrice || "";
   document.getElementById("prod-desc").value = prod.description;
-
-  // Show previews of current images
-  const preview = document.getElementById("prod-images-preview");
-  if (preview) {
-    preview.innerHTML = "";
-    const images = prod.images && prod.images.length ? prod.images : [prod.image];
-    images.forEach(url => {
-      const img = document.createElement("img");
-      img.src = url;
-      img.className = "preview-thumb";
-      preview.appendChild(img);
-    });
-  }
 
   switchTab("panel-add-product");
 }
@@ -454,8 +387,8 @@ function cancelEditProduct() {
   document.getElementById("admin-add-product-form").reset();
   handleCategorySelectChange();
   populateCategorySelect();
-  const preview = document.getElementById("prod-images-preview");
-  if (preview) preview.innerHTML = "";
+  adminState.addedUrls = [];
+  renderAddedUrls();
 
   switchTab("panel-manage-products");
 }
@@ -514,7 +447,54 @@ function handleCategorySelectChange() {
   }
 }
 
+function addUrlToList() {
+  const input = document.getElementById("prod-image-url-input");
+  if (!input) return;
+  const url = input.value.trim();
+  if (!url) return;
+
+  try {
+    new URL(url);
+  } catch (_) {
+    showAdminToast("Please enter a valid URL.", "warning");
+    return;
+  }
+
+  adminState.addedUrls.push(url);
+  input.value = "";
+  renderAddedUrls();
+}
+
+function removeUrlFromList(index) {
+  adminState.addedUrls.splice(index, 1);
+  renderAddedUrls();
+}
+
+function renderAddedUrls() {
+  const container = document.getElementById("added-urls-list");
+  if (!container) return;
+
+  if (adminState.addedUrls.length === 0) {
+    container.innerHTML = `<span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">No image URLs added yet.</span>`;
+    return;
+  }
+
+  container.innerHTML = adminState.addedUrls.map((url, idx) => {
+    return `
+      <div style="display:flex; align-items:center; background:rgba(255,255,255,0.03); padding:0.4rem 0.6rem; border-radius:6px; border:1px solid var(--border-color); gap: 0.75rem;">
+        <img src="${url}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; border:1px solid var(--border-color);" onerror="this.src='https://placehold.co/36x36?text=Err'">
+        <span style="font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; color:var(--text-color);">${url}</span>
+        <button type="button" onclick="removeUrlFromList(${idx})" style="color:#ef4444; background:none; border:none; cursor:pointer;" title="Remove URL">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+    `;
+  }).join("");
+}
+
 window.handleCategorySelectChange = handleCategorySelectChange;
+window.addUrlToList = addUrlToList;
+window.removeUrlFromList = removeUrlFromList;
 
 // ─── Delete Product ───────────────────────────────────────────────────────────
 async function deleteProduct(productId) {

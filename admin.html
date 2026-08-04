@@ -494,16 +494,22 @@
             </div>
 
             <div class="form-group full-width">
-              <label>Product Images</label>
-              <div class="upload-zone" id="upload-zone" onclick="document.getElementById('prod-images').click()">
-                <div class="upload-zone-inner">
-                  <i class="fa-solid fa-cloud-arrow-up upload-zone-icon"></i>
-                  <p class="upload-zone-title">Click to upload images</p>
-                  <p class="upload-zone-sub">PNG, JPG, WEBP — up to 5MB each · Multiple allowed</p>
-                </div>
-                <input type="file" id="prod-images" accept="image/*" multiple style="display:none;">
+              <label>Product Image URLs *</label>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                Add one or more image URLs (e.g. from Google Drive, Unsplash, or direct image links).
+              </p>
+              
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="url" id="prod-image-url-input" placeholder="e.g. https://images.unsplash.com/... or Google Drive direct link" style="flex: 1;">
+                <button type="button" class="btn btn-secondary" onclick="addUrlToList()" style="white-space: nowrap;">
+                  <i class="fa-solid fa-plus"></i> Add URL
+                </button>
               </div>
-              <div id="prod-images-preview" style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.75rem;"></div>
+
+              <!-- List of added URLs -->
+              <div id="added-urls-list" style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                <span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">No image URLs added yet.</span>
+              </div>
             </div>
 
             <div class="form-group full-width">
