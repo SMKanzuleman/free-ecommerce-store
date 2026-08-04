@@ -1,20 +1,5 @@
 [
   {
-    "id": "tech-1785832804524",
-    "title": "React Kit",
-    "category": "tech",
-    "price": 23,
-    "oldPrice": 100,
-    "rating": 5,
-    "reviews": 1,
-    "badge": "New",
-    "images": [
-      "/uploads/img-1785832897182-0.png"
-    ],
-    "image": "/uploads/img-1785832897182-0.png",
-    "description": "adsadsasdasdasdasdasd"
-  },
-  {
     "id": "tech-1",
     "title": "Wireless ANC Noise-Canceling Headphones",
     "category": "tech",
