@@ -468,12 +468,19 @@
             </div>
 
             <div class="form-group">
-              <label for="prod-category">Category *</label>
-              <select id="prod-category" required class="form-select">
+              <label for="prod-category-select">Category *</label>
+              <select id="prod-category-select" required class="form-select" onchange="handleCategorySelectChange()">
+                <option value="" disabled selected>Select category...</option>
                 <option value="cosmetics">💄 Cosmetics</option>
                 <option value="tech">💻 Tech</option>
-                <option value="clothing">👕 Clothing</option>
+                <option value="handicraft">💎 Handicraft</option>
+                <option value="new">+ Create New Category...</option>
               </select>
+            </div>
+
+            <div class="form-group hidden" id="custom-category-group">
+              <label for="prod-category-custom">Custom Category Name *</label>
+              <input type="text" id="prod-category-custom" placeholder="e.g. Jewelry">
             </div>
 
             <div class="form-group">

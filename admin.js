@@ -1,5 +1,6 @@
 // Admin Panel JavaScript Logic
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadState();
   initAdminDashboard();
   setupAdminListeners();
 });
@@ -11,7 +12,20 @@ let adminState = {
   editingProductId: null
 };
 
-(function loadState() {
+async function loadState() {
+  // Load products from server first
+  try {
+    const response = await fetch("/api/products").catch(() => fetch("products/products.json"));
+    if (response && response.ok) {
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        localStorage.setItem("aura_products", JSON.stringify(data));
+      }
+    }
+  } catch (error) {
+    console.warn("Could not load products from local products folder/server, using local storage:", error);
+  }
+
   // Load products and migrate legacy image field
   const rawProducts = JSON.parse(localStorage.getItem("aura_products")) || [];
   adminState.products = rawProducts.map(p => {
@@ -42,7 +56,7 @@ let adminState = {
     footerCopyright: "&copy; 2026 AuraStore. All rights reserved. Zero Card Verification Fees. Zero Hosting Costs.",
     deliveryCharges: 250
   }, JSON.parse(localStorage.getItem("aura_settings")) || {});
-})();
+}
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 function initAdminDashboard() {
@@ -82,6 +96,7 @@ function initAdminDashboard() {
   const sheetInput = document.getElementById("setting-google-sheet-url");
   if (sheetInput) sheetInput.value = s.googleSheetUrl || "";
 
+  populateCategorySelect();
   renderOverview();
   renderManageTable();
   initAdminTheme();
@@ -234,7 +249,9 @@ async function handleAddProduct(e) {
   e.preventDefault();
 
   const title = document.getElementById("prod-title").value.trim();
-  const category = document.getElementById("prod-category").value;
+  const catSelect = document.getElementById("prod-category-select").value;
+  const catCustom = document.getElementById("prod-category-custom").value.trim().toLowerCase();
+  const category = catSelect === "new" ? catCustom : catSelect;
   const price = parseFloat(document.getElementById("prod-price").value);
   const oldPriceVal = document.getElementById("prod-old-price").value;
   const oldPrice = oldPriceVal ? parseFloat(oldPriceVal) : null;
@@ -244,14 +261,32 @@ async function handleAddProduct(e) {
   const fileInput = document.getElementById("prod-images");
   let newImages = [];
   if (fileInput && fileInput.files.length > 0) {
-    newImages = await Promise.all(Array.from(fileInput.files).map(file => {
+    const base64Objects = await Promise.all(Array.from(fileInput.files).map(file => {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
+        reader.onload = () => resolve({ name: file.name, data: reader.result });
         reader.onerror = () => reject(reader.error);
         reader.readAsDataURL(file);
       });
     }));
+
+    // Upload base64 images to server
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ images: base64Objects })
+      });
+      if (response && response.ok) {
+        const resJson = await response.json();
+        if (resJson && resJson.success && Array.isArray(resJson.urls)) {
+          newImages = resJson.urls;
+        }
+      }
+    } catch (err) {
+      console.warn("Could not upload image files to server, using Base64 fallback:", err);
+      newImages = base64Objects.map(obj => obj.data);
+    }
   }
 
   const isEditing = !!adminState.editingProductId;
@@ -303,7 +338,7 @@ async function handleAddProduct(e) {
     showAdminToast(`Product "${title}" added to ${category.toUpperCase()}!`, "success");
   }
 
-  saveProductsToStorage();
+  await saveProductsToStorage();
 
   // Reset Form and Titles
   document.getElementById("add-panel-title").textContent = "Add New Product to Store";
@@ -314,6 +349,8 @@ async function handleAddProduct(e) {
   if (pubIcon) pubIcon.className = "fa-solid fa-floppy-disk";
 
   document.getElementById("admin-add-product-form").reset();
+  handleCategorySelectChange();
+  populateCategorySelect();
   const preview = document.getElementById("prod-images-preview");
   if (preview) preview.innerHTML = "";
 
@@ -341,7 +378,11 @@ function startEditProduct(productId) {
 
   // Populate inputs
   document.getElementById("prod-title").value = prod.title;
-  document.getElementById("prod-category").value = prod.category;
+  const catSelectEl = document.getElementById("prod-category-select");
+  if (catSelectEl) {
+    catSelectEl.value = prod.category.toLowerCase();
+  }
+  handleCategorySelectChange();
   document.getElementById("prod-price").value = prod.price;
   document.getElementById("prod-old-price").value = prod.oldPrice || "";
   document.getElementById("prod-desc").value = prod.description;
@@ -376,6 +417,8 @@ function cancelEditProduct() {
   if (cancelBtn) cancelBtn.classList.add("hidden");
 
   document.getElementById("admin-add-product-form").reset();
+  handleCategorySelectChange();
+  populateCategorySelect();
   const preview = document.getElementById("prod-images-preview");
   if (preview) preview.innerHTML = "";
 
@@ -386,14 +429,67 @@ function cancelEditProduct() {
 window.startEditProduct = startEditProduct;
 window.cancelEditProduct = cancelEditProduct;
 
+function populateCategorySelect() {
+  const select = document.getElementById("prod-category-select");
+  if (!select) return;
+
+  const categories = Array.from(new Set(adminState.products.map(p => p.category.toLowerCase().trim())));
+
+  const labelMap = {
+    cosmetics: "💄 Cosmetics",
+    tech: "💻 Tech",
+    handicraft: "💎 Handicraft"
+  };
+
+  const currentVal = select.value;
+
+  let html = `<option value="" disabled selected>Select category...</option>`;
+  categories.forEach(cat => {
+    const label = labelMap[cat] || (cat.charAt(0).toUpperCase() + cat.slice(1));
+    html += `<option value="${cat}">${label}</option>`;
+  });
+  
+  // Ensure the defaults are always listed if not already present
+  ["cosmetics", "tech", "handicraft"].forEach(defaultCat => {
+    if (!categories.includes(defaultCat)) {
+      html += `<option value="${defaultCat}">${labelMap[defaultCat]}</option>`;
+    }
+  });
+
+  html += `<option value="new">+ Create New Category...</option>`;
+  select.innerHTML = html;
+
+  if (currentVal && select.querySelector(`option[value="${currentVal}"]`)) {
+    select.value = currentVal;
+  }
+}
+
+function handleCategorySelectChange() {
+  const select = document.getElementById("prod-category-select");
+  const customGroup = document.getElementById("custom-category-group");
+  const customInput = document.getElementById("prod-category-custom");
+
+  if (select && select.value === "new") {
+    customGroup.classList.remove("hidden");
+    customInput.required = true;
+  } else {
+    customGroup.classList.add("hidden");
+    customInput.required = false;
+    customInput.value = "";
+  }
+}
+
+window.handleCategorySelectChange = handleCategorySelectChange;
+
 // ─── Delete Product ───────────────────────────────────────────────────────────
-function deleteProduct(productId) {
+async function deleteProduct(productId) {
   const prod = adminState.products.find(p => p.id === productId);
   if (!prod) return;
 
   if (confirm(`Are you sure you want to delete "${prod.title}"?`)) {
     adminState.products = adminState.products.filter(p => p.id !== productId);
-    saveProductsToStorage();
+    await saveProductsToStorage();
+    populateCategorySelect();
     renderOverview();
     renderManageTable();
     showAdminToast("Product deleted from store catalog", "info");
@@ -446,8 +542,26 @@ function handleSaveFooterSettings(e) {
 }
 
 // ─── Storage ──────────────────────────────────────────────────────────────────
-function saveProductsToStorage() {
+async function saveProductsToStorage() {
   localStorage.setItem("aura_products", JSON.stringify(adminState.products));
+
+  try {
+    const response = await fetch("/api/products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(adminState.products)
+    });
+    if (response && response.ok) {
+      showAdminToast("Products saved successfully to local folder products/products.json!", "success");
+    } else {
+      throw new Error("HTTP error " + response.status);
+    }
+  } catch (error) {
+    console.warn("Could not write products to server:", error);
+    showAdminToast("Saved to browser local storage only. (Server not running or write failed)", "info");
+  }
 }
 
 // ─── Theme ────────────────────────────────────────────────────────────────────

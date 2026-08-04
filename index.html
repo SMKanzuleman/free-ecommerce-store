@@ -81,7 +81,7 @@
     </div>
     <div class="mobile-drawer-body">
       <h4>Categories</h4>
-      <div class="mobile-cat-list">
+      <div class="mobile-cat-list" id="mobile-categories">
         <button class="mobile-cat-btn" data-category="cosmetics"><i class="fa-solid fa-wand-magic-sparkles"></i> Cosmetics</button>
         <button class="mobile-cat-btn" data-category="tech"><i class="fa-solid fa-laptop"></i> Tech</button>
         <button class="mobile-cat-btn" data-category="clothing"><i class="fa-solid fa-shirt"></i> Clothing</button>
@@ -126,11 +126,11 @@
             </div>
           </a>
 
-          <!-- Clothing Image Card -->
-          <a href="#shop" class="hero-img-card clothing-card" onclick="setCategoryFilter('clothing')">
-            <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80" alt="Clothing Collection" class="hero-card-img">
+          <!-- Handicraft Image Card -->
+          <a href="#shop" class="hero-img-card clothing-card" onclick="setCategoryFilter('handicraft')">
+            <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&q=80" alt="Handicraft Collection" class="hero-card-img">
             <div class="hero-card-overlay">
-              <span class="hero-card-tag clothing-tag"><i class="fa-solid fa-shirt"></i> Clothing</span>
+              <span class="hero-card-tag clothing-tag"><i class="fa-solid fa-gem"></i> Handicraft</span>
             </div>
           </a>
 
@@ -326,11 +326,11 @@
       <!-- Column 2: Quick Links -->
       <div class="footer-col">
         <h4>Shop Directory</h4>
-        <ul class="footer-menu">
-          <li><a href="index.html#all-products">All Products</a></li>
-          <li><a href="index.html#all-products">Cosmetics Catalog</a></li>
-          <li><a href="index.html#all-products">Tech Catalog</a></li>
-          <li><a href="index.html#all-products">Clothing Catalog</a></li>
+        <ul class="footer-menu" id="footer-category-links">
+          <li><a href="index.html#shop" onclick="setCategoryFilter('all')">All Products</a></li>
+          <li><a href="index.html#shop" onclick="setCategoryFilter('cosmetics')">Cosmetics Catalog</a></li>
+          <li><a href="index.html#shop" onclick="setCategoryFilter('tech')">Tech Catalog</a></li>
+          <li><a href="index.html#shop" onclick="setCategoryFilter('handicraft')">Handicraft Catalog</a></li>
         </ul>
       </div>
 

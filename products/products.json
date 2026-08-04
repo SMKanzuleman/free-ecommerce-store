@@ -1,0 +1,110 @@
+[
+  {
+    "id": "cosmetics-1",
+    "title": "Radiant Vitamin C Glow Serum",
+    "category": "cosmetics",
+    "price": 34.99,
+    "oldPrice": 48.00,
+    "rating": 4.9,
+    "reviews": 184,
+    "badge": "Bestseller",
+    "image": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80",
+    "description": "Hydrating antioxidant face serum enriched with pure Vitamin C, hyaluronic acid, and botanical extracts for glowing skin."
+  },
+  {
+    "id": "cosmetics-2",
+    "title": "Velvet Matte Weightless Lipstick",
+    "category": "cosmetics",
+    "price": 22.00,
+    "oldPrice": 28.00,
+    "rating": 4.7,
+    "reviews": 92,
+    "badge": "Trending",
+    "image": "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=600&q=80",
+    "description": "Long-lasting, non-drying matte lipstick infused with jojoba oil and vitamin E for smooth application."
+  },
+  {
+    "id": "cosmetics-3",
+    "title": "Nourishing Botanical Lip & Body Oil",
+    "category": "cosmetics",
+    "price": 18.50,
+    "oldPrice": 24.00,
+    "rating": 4.8,
+    "reviews": 67,
+    "badge": "New",
+    "image": "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80",
+    "description": "Ultra-hydrating essential oil blend designed to restore moisture and leave skin silky soft."
+  },
+  {
+    "id": "tech-1",
+    "title": "Wireless ANC Noise-Canceling Headphones",
+    "category": "tech",
+    "price": 129.99,
+    "oldPrice": 179.99,
+    "rating": 4.8,
+    "reviews": 215,
+    "badge": "Top Rated",
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
+    "description": "Immersive studio-quality sound, active noise cancellation, 40-hour battery life, and comfortable ear cushions."
+  },
+  {
+    "id": "tech-2",
+    "title": "Ergonomic RGB Mechanical Keyboard",
+    "category": "tech",
+    "price": 99.50,
+    "oldPrice": 135.00,
+    "rating": 4.9,
+    "reviews": 140,
+    "badge": "Hot",
+    "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80",
+    "description": "Wireless mechanical keyboard with tactile blue switches, customizable RGB backlighting, and aluminum body."
+  },
+  {
+    "id": "tech-3",
+    "title": "Minimalist Smart Watch with Fitness Tracker",
+    "category": "tech",
+    "price": 84.99,
+    "oldPrice": 110.00,
+    "rating": 4.6,
+    "reviews": 88,
+    "badge": "Sale",
+    "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80",
+    "description": "Tracks heart rate, sleep metrics, workout activity, and smartphone notifications with 7-day battery life."
+  },
+  {
+    "id": "handicraft-1",
+    "title": "Radiant Hand-Thrown Ceramic Floral Vase",
+    "category": "handicraft",
+    "price": 42.00,
+    "oldPrice": 55.00,
+    "rating": 4.8,
+    "reviews": 41,
+    "badge": "Unique",
+    "image": "https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=600&q=80",
+    "description": "Hand-thrown earthenware clay vase with unique organic reactive glaze, perfect for dry or fresh floral arrangements."
+  },
+  {
+    "id": "handicraft-2",
+    "title": "Intricately Carved Wooden Jewelry Organizer",
+    "category": "handicraft",
+    "price": 65.00,
+    "oldPrice": 85.00,
+    "rating": 4.9,
+    "reviews": 28,
+    "badge": "Handmade",
+    "image": "https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&w=600&q=80",
+    "description": "Artisan-crafted premium rosewood storage box featuring floral brass inlays and protective velvet compartments."
+  },
+  {
+    "id": "handicraft-3",
+    "title": "Artisanal Boho Macrame Wall Hanging Tapestry",
+    "category": "handicraft",
+    "price": 29.99,
+    "oldPrice": 40.00,
+    "rating": 4.7,
+    "reviews": 19,
+    "badge": "Artisanal",
+    "image": "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=600&q=80",
+    "description": "Charming hand-woven cotton cord wall art decoration mounted on a polished natural driftwood branch."
+  }
+]

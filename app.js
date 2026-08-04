@@ -160,8 +160,8 @@ const emptyState = document.getElementById("empty-state");
 
 const searchInput = document.getElementById("search-input");
 const clearSearchBtn = document.getElementById("clear-search-btn");
-const categoryButtons = document.querySelectorAll(".cat-btn");
-const navCategoryLinks = document.querySelectorAll(".nav-cat-link");
+let categoryButtons = document.querySelectorAll(".cat-btn");
+let navCategoryLinks = document.querySelectorAll(".nav-cat-link");
 const priceRange = document.getElementById("price-range");
 const priceValue = document.getElementById("price-value");
 const sortSelect = document.getElementById("sort-select");
@@ -195,13 +195,126 @@ const mobileMenuBtn = document.getElementById("mobile-menu-btn");
 const mobileDrawerOverlay = document.getElementById("mobile-drawer-overlay");
 const mobileDrawer = document.getElementById("mobile-drawer");
 const closeMobileDrawerBtn = document.getElementById("close-mobile-drawer");
-const mobileCatButtons = document.querySelectorAll(".mobile-cat-btn");
+let mobileCatButtons = document.querySelectorAll(".mobile-cat-btn");
+
+// Load products from local folder/server
+async function loadProductsFromServer() {
+  try {
+    const response = await fetch("/api/products").catch(() => fetch("products/products.json"));
+    if (response && response.ok) {
+      const data = await response.json();
+      if (Array.isArray(data) && data.length > 0) {
+        state.products = data;
+        localStorage.setItem("aura_products", JSON.stringify(data));
+      }
+    }
+  } catch (error) {
+    console.warn("Could not load products from local products folder/server, using cached local storage or initial demo catalog:", error);
+  }
+}
+
+const CATEGORY_ICONS = {
+  cosmetics: "fa-wand-magic-sparkles",
+  tech: "fa-laptop",
+  handicraft: "fa-gem",
+  clothing: "fa-shirt"
+};
+
+function getUniqueCategories() {
+  const categories = new Set();
+  state.products.forEach(p => {
+    if (p.category) {
+      categories.add(p.category.toLowerCase().trim());
+    }
+  });
+  return Array.from(categories);
+}
+
+function renderCategoriesUI() {
+  const categories = getUniqueCategories();
+
+  // Update Navbar Categories
+  const navEl = document.getElementById("nav-categories");
+  if (navEl) {
+    navEl.innerHTML = categories.map(cat => {
+      const icon = CATEGORY_ICONS[cat] || "fa-tag";
+      const label = cat.charAt(0).toUpperCase() + cat.slice(1);
+      return `<a href="#shop" class="nav-cat-link" data-category="${cat}"><i class="fa-solid ${icon}"></i> ${label}</a>`;
+    }).join("");
+  }
+
+  // Update Mobile Drawer Categories
+  const mobileEl = document.getElementById("mobile-categories");
+  if (mobileEl) {
+    mobileEl.innerHTML = categories.map(cat => {
+      const icon = CATEGORY_ICONS[cat] || "fa-tag";
+      const label = cat.charAt(0).toUpperCase() + cat.slice(1);
+      return `<button class="mobile-cat-btn" data-category="${cat}"><i class="fa-solid ${icon}"></i> ${label}</button>`;
+    }).join("");
+  }
+
+  // Update Main Filter Pills
+  const filterEl = document.getElementById("category-list");
+  if (filterEl) {
+    const allBtnHTML = `<button class="cat-btn ${state.filters.category === 'all' ? 'active' : ''}" data-category="all">All Catalog</button>`;
+    const clearBtnHTML = `<button class="cat-btn reset-filters-pill" id="reset-filters"><i class="fa-solid fa-arrow-rotate-left"></i> Clear</button>`;
+    
+    filterEl.innerHTML = allBtnHTML + categories.map(cat => {
+      const icon = CATEGORY_ICONS[cat] || "fa-tag";
+      const label = cat.charAt(0).toUpperCase() + cat.slice(1);
+      const activeClass = state.filters.category === cat ? "active" : "";
+      return `<button class="cat-btn ${activeClass}" data-category="${cat}"><i class="fa-solid ${icon}"></i> ${label}</button>`;
+    }).join("") + clearBtnHTML;
+  }
+
+  // Update Footer Links
+  const footerEl = document.getElementById("footer-category-links");
+  if (footerEl) {
+    let html = `<li><a href="index.html#shop" onclick="setCategoryFilter('all')">All Products</a></li>`;
+    html += categories.map(cat => {
+      const label = cat.charAt(0).toUpperCase() + cat.slice(1);
+      return `<li><a href="index.html#shop" onclick="setCategoryFilter('${cat}')">${label} Catalog</a></li>`;
+    }).join("");
+    footerEl.innerHTML = html;
+  }
+
+  // Update let bindings
+  categoryButtons = document.querySelectorAll(".cat-btn");
+  navCategoryLinks = document.querySelectorAll(".nav-cat-link");
+  mobileCatButtons = document.querySelectorAll(".mobile-cat-btn");
+
+  // Re-bind listeners
+  bindCategoryListeners();
+}
+
+function bindCategoryListeners() {
+  categoryButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      setCategoryFilter(btn.dataset.category);
+    });
+  });
+
+  navCategoryLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+      setCategoryFilter(link.dataset.category);
+    });
+  });
+
+  mobileCatButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      setCategoryFilter(btn.dataset.category);
+      closeMobileMenu();
+    });
+  });
+
+  const resetBtn = document.getElementById("reset-filters");
+  if (resetBtn) resetBtn.addEventListener("click", resetFilters);
+}
 
 // Initialize App
-document.addEventListener("DOMContentLoaded", () => {
-  if (!localStorage.getItem("aura_products")) {
-    localStorage.setItem("aura_products", JSON.stringify(INITIAL_PRODUCTS));
-  }
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadProductsFromServer();
+  renderCategoriesUI();
   applyDynamicSettings();
   renderProducts();
   updateCartUI();
@@ -335,27 +448,7 @@ function setupEventListeners() {
     });
   }
 
-  // Sidebar Category Filter Buttons
-  categoryButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      setCategoryFilter(btn.dataset.category);
-    });
-  });
-
-  // Navbar Category Links (Cosmetics, Tech, Clothing)
-  navCategoryLinks.forEach(link => {
-    link.addEventListener("click", (e) => {
-      setCategoryFilter(link.dataset.category);
-    });
-  });
-
-  // Mobile Category Drawer Buttons
-  mobileCatButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      setCategoryFilter(btn.dataset.category);
-      closeMobileMenu();
-    });
-  });
+  // Dynamic category bindings are handled in bindCategoryListeners()
 
   // Mobile Menu Drawer Toggles
   if (mobileMenuBtn) mobileMenuBtn.addEventListener("click", openMobileMenu);
@@ -379,8 +472,7 @@ function setupEventListeners() {
     });
   }
 
-  // Reset Filters
-  if (resetFiltersBtn) resetFiltersBtn.addEventListener("click", resetFilters);
+  // Reset Filters (handled dynamically in bindCategoryListeners)
   document.getElementById("clear-all-filters-btn")?.addEventListener("click", resetFilters);
   document.getElementById("btn-clear-filters-pill")?.addEventListener("click", resetFilters);
 
@@ -462,6 +554,8 @@ function setCategoryFilter(category) {
 
   renderProducts();
 }
+
+window.setCategoryFilter = setCategoryFilter;
 
 function resetFilters() {
   state.filters = { category: "all", maxPrice: 500, search: "", sort: "featured" };
