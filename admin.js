@@ -16,7 +16,10 @@ let adminState = {
 async function loadState() {
   // Load products from server first
   try {
-    const response = await fetch("/api/products").catch(() => fetch("products/products.json"));
+    let response = await fetch("/api/products").catch(() => null);
+    if (!response || !response.ok) {
+      response = await fetch("products/products.json");
+    }
     if (response && response.ok) {
       const data = await response.json();
       if (Array.isArray(data)) {
@@ -24,7 +27,7 @@ async function loadState() {
       }
     }
   } catch (error) {
-    console.warn("Could not load products from local products folder/server, using local storage:", error);
+    console.warn("Could not load products from server, using cached local storage:", error);
   }
 
   // Load products and migrate legacy image field
@@ -200,7 +203,7 @@ function renderOverview() {
     const imgSrc = (p.images && p.images[0]) || p.image || "https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80";
     return `
     <tr>
-      <td><img src="${imgSrc}" alt="${p.title}" class="admin-table-img" onerror="this.src='https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80'"></td>
+      <td><img src="${imgSrc}" referrerpolicy="no-referrer" alt="${p.title}" class="admin-table-img" onerror="this.src='https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80'"></td>
       <td><strong>${p.title}</strong></td>
       <td><span class="tag-category">${p.category}</span></td>
       <td>${adminState.settings.currency}${p.price.toFixed(2)}</td>
@@ -234,7 +237,7 @@ function renderManageTable() {
     const imgSrc = (p.images && p.images[0]) || p.image || "https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80";
     return `
     <tr>
-      <td><img src="${imgSrc}" alt="${p.title}" class="admin-table-img" onerror="this.src='https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80'"></td>
+      <td><img src="${imgSrc}" referrerpolicy="no-referrer" alt="${p.title}" class="admin-table-img" onerror="this.src='https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80'"></td>
       <td><strong>${p.title}</strong></td>
       <td><span class="tag-category">${p.category}</span></td>
       <td>${adminState.settings.currency}${p.price.toFixed(2)}</td>
@@ -502,7 +505,7 @@ function renderAddedUrls() {
   container.innerHTML = adminState.addedUrls.map((url, idx) => {
     return `
       <div style="display:flex; align-items:center; background:rgba(255,255,255,0.03); padding:0.4rem 0.6rem; border-radius:6px; border:1px solid var(--border-color); gap: 0.75rem;">
-        <img src="${url}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; border:1px solid var(--border-color);" onerror="this.src='https://placehold.co/36x36?text=Err'">
+        <img src="${url}" referrerpolicy="no-referrer" style="width:36px; height:36px; object-fit:cover; border-radius:4px; border:1px solid var(--border-color);" onerror="this.src='https://placehold.co/36x36?text=Err'">
         <span style="font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; color:var(--text-color);">${url}</span>
         <button type="button" onclick="removeUrlFromList(${idx})" style="color:#ef4444; background:none; border:none; cursor:pointer;" title="Remove URL">
           <i class="fa-solid fa-trash-can"></i>
@@ -620,7 +623,7 @@ async function saveProductsToStorage() {
       }
     } catch (error) {
       console.warn("Could not write products to server:", error);
-      showAdminToast("Saved to browser local storage only. (Server not running or write failed)", "info");
+      showAdminToast("Saved locally on this device only! Configure GitHub Sync in Settings to publish to all devices.", "warning");
     }
   }
 }

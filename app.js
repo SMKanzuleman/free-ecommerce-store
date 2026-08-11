@@ -86,7 +86,10 @@ let mobileCatButtons = document.querySelectorAll(".mobile-cat-btn");
 // Load products from local folder/server
 async function loadProductsFromServer() {
   try {
-    const response = await fetch("/api/products").catch(() => fetch("products/products.json"));
+    let response = await fetch("/api/products").catch(() => null);
+    if (!response || !response.ok) {
+      response = await fetch("products/products.json");
+    }
     if (response && response.ok) {
       const data = await response.json();
       if (Array.isArray(data)) {
@@ -504,7 +507,7 @@ function renderProducts() {
           <i class="fa-${isWishlisted ? 'solid' : 'regular'} fa-heart"></i>
         </button>
         <div class="product-img-wrapper">
-          <img src="${productImages[0]}" alt="${prod.title}" class="product-img" id="img-${prod.id}" onclick="openProductModal('${prod.id}')" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80'">
+          <img src="${productImages[0]}" referrerpolicy="no-referrer" alt="${prod.title}" class="product-img" id="img-${prod.id}" onclick="openProductModal('${prod.id}')" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80'">
           ${productImages.length > 1 ? `
             <div class="carousel-dots">
               ${productImages.map((imgUrl, idx) => `
@@ -607,7 +610,7 @@ function updateCartUI() {
 
   cartItemsContainer.innerHTML = state.cart.map(item => `
     <div class="cart-item">
-      <img src="${item.image}" alt="${item.title}" class="cart-item-img">
+      <img src="${item.image}" referrerpolicy="no-referrer" alt="${item.title}" class="cart-item-img">
       <div class="cart-item-info">
         <h4 class="cart-item-title">${item.title}</h4>
         <div class="cart-item-price">${state.settings.currency}${item.price.toFixed(2)}</div>
@@ -663,7 +666,7 @@ function openProductModal(productId) {
     <div class="product-modal-grid">
       <div class="modal-left">
         <div class="modal-img-container">
-          <img src="${productImages[0]}" alt="${prod.title}" class="modal-product-img" id="modal-img-${prod.id}" onerror="this.src='https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80'">
+          <img src="${productImages[0]}" referrerpolicy="no-referrer" alt="${prod.title}" class="modal-product-img" id="modal-img-${prod.id}" onerror="this.src='https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80'">
           ${productImages.length > 1 ? `
             <div class="carousel-dots">
               ${productImages.map((imgUrl, idx) => `
