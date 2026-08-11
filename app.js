@@ -88,7 +88,7 @@ async function loadProductsFromServer() {
   try {
     let response = await fetch("/api/products").catch(() => null);
     if (!response || !response.ok) {
-      response = await fetch("products/products.json");
+      response = await fetch("products/products.json?v=" + Date.now());
     }
     if (response && response.ok) {
       const data = await response.json();
