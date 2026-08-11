@@ -1,5 +1,20 @@
 [
   {
+    "id": "tech-1786453123667",
+    "title": "VLC icon",
+    "category": "tech",
+    "price": 10,
+    "oldPrice": 100,
+    "rating": 5,
+    "reviews": 1,
+    "badge": "New",
+    "images": [
+      "https://drive.google.com/file/d/1ixKKgnzJORCBKKz_TZNMY4aIWKT3sHKv/view?usp=drive_link"
+    ],
+    "image": "https://drive.google.com/file/d/1ixKKgnzJORCBKKz_TZNMY4aIWKT3sHKv/view?usp=drive_link",
+    "description": "Thsi sis vety good"
+  },
+  {
     "id": "cosmetics-1785834642285",
     "title": "React Kit",
     "category": "cosmetics",
