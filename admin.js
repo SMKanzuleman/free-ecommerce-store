@@ -447,10 +447,28 @@ function handleCategorySelectChange() {
   }
 }
 
+function convertGoogleDriveLink(url) {
+  if (!url) return url;
+  
+  // Match standard /file/d/FILE_ID/view
+  const fileDMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (fileDMatch && fileDMatch[1]) {
+    return `https://drive.google.com/uc?export=download&id=${fileDMatch[1]}`;
+  }
+  
+  // Match query parameter ?id=FILE_ID
+  const idMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (url.includes("drive.google.com") && idMatch && idMatch[1]) {
+    return `https://drive.google.com/uc?export=download&id=${idMatch[1]}`;
+  }
+  
+  return url;
+}
+
 function addUrlToList() {
   const input = document.getElementById("prod-image-url-input");
   if (!input) return;
-  const url = input.value.trim();
+  let url = input.value.trim();
   if (!url) return;
 
   try {
@@ -459,6 +477,8 @@ function addUrlToList() {
     showAdminToast("Please enter a valid URL.", "warning");
     return;
   }
+
+  url = convertGoogleDriveLink(url);
 
   adminState.addedUrls.push(url);
   input.value = "";
