@@ -453,13 +453,13 @@ function convertGoogleDriveLink(url) {
   // Match standard /file/d/FILE_ID/view
   const fileDMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
   if (fileDMatch && fileDMatch[1]) {
-    return `https://drive.google.com/uc?export=download&id=${fileDMatch[1]}`;
+    return `https://lh3.googleusercontent.com/d/${fileDMatch[1]}`;
   }
   
   // Match query parameter ?id=FILE_ID
   const idMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
   if (url.includes("drive.google.com") && idMatch && idMatch[1]) {
-    return `https://drive.google.com/uc?export=download&id=${idMatch[1]}`;
+    return `https://lh3.googleusercontent.com/d/${idMatch[1]}`;
   }
   
   return url;

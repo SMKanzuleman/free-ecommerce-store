@@ -1,0 +1,17 @@
+[
+  {
+    "id": "tech-1786454159790",
+    "title": "VLC icon",
+    "category": "tech",
+    "price": 50,
+    "oldPrice": 100,
+    "rating": 5,
+    "reviews": 1,
+    "badge": "New",
+    "images": [
+      "https://lh3.googleusercontent.com/d/1ixKKgnzJORCBKKz_TZNMY4aIWKT3sHKv"
+    ],
+    "image": "https://lh3.googleusercontent.com/d/1ixKKgnzJORCBKKz_TZNMY4aIWKT3sHKv",
+    "description": "yes go go"
+  }
+]
