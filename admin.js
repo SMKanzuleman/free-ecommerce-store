@@ -14,6 +14,47 @@ let adminState = {
 };
 
 async function loadState() {
+  // Load settings from server first
+  try {
+    let response = await fetch("/api/settings").catch(() => null);
+    if (!response || !response.ok) {
+      response = await fetch("products/settings.json?v=" + Date.now());
+    }
+    if (response && response.ok) {
+      const data = await response.json();
+      if (data && typeof data === 'object' && !Array.isArray(data)) {
+        const localSettings = JSON.parse(localStorage.getItem("aura_settings")) || {};
+        adminState.settings = Object.assign({}, data, localSettings);
+        localStorage.setItem("aura_settings", JSON.stringify(adminState.settings));
+      }
+    }
+  } catch (error) {
+    console.warn("Could not load settings from server:", error);
+  }
+
+  // Fallback and defaults merge
+  adminState.settings = Object.assign({
+    whatsappNumber: "+923017062739",
+    currency: "Rs",
+    storeName: "Smart Choice",
+    googleSheetUrl: "https://script.google.com/macros/s/AKfycbzNVqb1nfvuHLqupdtIJu8axAp6JPf6iYN0AfO_fzfqUiPnStg9hlaTsthEJqOoTKbjlg/exec",
+    adminEmail: "",
+    footerPhone: "+92 301 7062739",
+    footerEmail: "support@aurastore.com",
+    footerAddress: "123 Storefront Ave, Retail District, CA 90210",
+    footerFacebook: "#",
+    footerInstagram: "#",
+    footerTwitter: "#",
+    footerPinterest: "#",
+    footerDesc: "Your ultimate destination for premium cosmetics, cutting-edge tech, and modern clothing. Built 100% free with no hidden hosting or card verification fees.",
+    footerCopyright: "&copy; 2026 AuraStore. All rights reserved. Zero Card Verification Fees. Zero Hosting Costs.",
+    deliveryCharges: 250,
+    githubUsername: "",
+    githubRepo: "",
+    githubToken: "",
+    githubBranch: "main"
+  }, adminState.settings || JSON.parse(localStorage.getItem("aura_settings")) || {});
+
   // Load products from server first
   try {
     let response = await fetch("/api/products").catch(() => null);
@@ -41,29 +82,6 @@ async function loadState() {
     }
     return p;
   });
-
-  // Load settings
-  adminState.settings = Object.assign({
-    whatsappNumber: "+923017062739",
-    currency: "Rs",
-    storeName: "Smart Choice",
-    googleSheetUrl: "https://script.google.com/macros/s/AKfycbzNVqb1nfvuHLqupdtIJu8axAp6JPf6iYN0AfO_fzfqUiPnStg9hlaTsthEJqOoTKbjlg/exec",
-    adminEmail: "",
-    footerPhone: "+92 301 7062739",
-    footerEmail: "support@aurastore.com",
-    footerAddress: "123 Storefront Ave, Retail District, CA 90210",
-    footerFacebook: "#",
-    footerInstagram: "#",
-    footerTwitter: "#",
-    footerPinterest: "#",
-    footerDesc: "Your ultimate destination for premium cosmetics, cutting-edge tech, and modern clothing. Built 100% free with no hidden hosting or card verification fees.",
-    footerCopyright: "&copy; 2026 AuraStore. All rights reserved. Zero Card Verification Fees. Zero Hosting Costs.",
-    deliveryCharges: 250,
-    githubUsername: "",
-    githubRepo: "",
-    githubToken: "",
-    githubBranch: "main"
-  }, JSON.parse(localStorage.getItem("aura_settings")) || {});
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
@@ -112,6 +130,7 @@ function initAdminDashboard() {
   renderOverview();
   renderManageTable();
   initAdminTheme();
+  updateSyncStatusUI();
 }
 
 // ─── Listeners ───────────────────────────────────────────────────────────────
@@ -535,7 +554,7 @@ async function deleteProduct(productId) {
 }
 
 // ─── Settings ─────────────────────────────────────────────────────────────────
-function handleSaveSettings(e) {
+async function handleSaveSettings(e) {
   e.preventDefault();
   const num = document.getElementById("setting-whatsapp").value.trim().replace(/\+/g, "");
   const storeName = document.getElementById("setting-store-name").value.trim() || "AuraStore";
@@ -567,11 +586,12 @@ function handleSaveSettings(e) {
   localStorage.setItem("aura_settings", JSON.stringify(adminState.settings));
   localStorage.setItem("aura_admin_pin", newPin);
 
-  showAdminToast("Store settings & Security PIN saved!", "success");
+  await saveSettingsToStorage();
+  updateSyncStatusUI();
   initAdminDashboard();
 }
 
-function handleSaveFooterSettings(e) {
+async function handleSaveFooterSettings(e) {
   e.preventDefault();
   const get = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
 
@@ -586,7 +606,61 @@ function handleSaveFooterSettings(e) {
   adminState.settings.footerCopyright = get("setting-footer-copy");
 
   localStorage.setItem("aura_settings", JSON.stringify(adminState.settings));
+  
+  await saveSettingsToStorage();
   showAdminToast("Footer settings saved successfully!", "success");
+}
+
+async function saveSettingsToStorage() {
+  const { githubUsername, githubRepo, githubToken } = adminState.settings;
+
+  // Extract public settings
+  const publicSettings = {
+    whatsappNumber: adminState.settings.whatsappNumber,
+    storeName: adminState.settings.storeName,
+    currency: adminState.settings.currency,
+    deliveryCharges: adminState.settings.deliveryCharges,
+    googleSheetUrl: adminState.settings.googleSheetUrl,
+    adminEmail: adminState.settings.adminEmail,
+    footerDesc: adminState.settings.footerDesc,
+    footerEmail: adminState.settings.footerEmail,
+    footerPhone: adminState.settings.footerPhone,
+    footerAddress: adminState.settings.footerAddress,
+    footerFacebook: adminState.settings.footerFacebook,
+    footerInstagram: adminState.settings.footerInstagram,
+    footerTwitter: adminState.settings.footerTwitter,
+    footerPinterest: adminState.settings.footerPinterest,
+    footerCopyright: adminState.settings.footerCopyright
+  };
+
+  if (githubUsername && githubRepo && githubToken) {
+    // GitHub API Mode
+    try {
+      const jsonStr = JSON.stringify(publicSettings, null, 2);
+      const base64Content = btoa(unescape(encodeURIComponent(jsonStr)));
+      
+      await commitToGitHub("products/settings.json", base64Content, "Update store settings");
+    } catch (error) {
+      console.error("Failed to save settings to GitHub repository:", error);
+      showAdminToast("GitHub settings save failed! Saved locally.", "error");
+    }
+  } else {
+    // Local Server Mode
+    try {
+      const response = await fetch("/api/settings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(publicSettings)
+      });
+      if (!response || !response.ok) {
+        throw new Error("HTTP error " + response.status);
+      }
+    } catch (error) {
+      console.warn("Could not write settings to server:", error);
+    }
+  }
 }
 
 // ─── Storage ──────────────────────────────────────────────────────────────────
@@ -700,4 +774,23 @@ async function commitToGitHub(filePath, contentBase64, commitMessage) {
   }
 
   return await putRes.json();
+}
+
+function updateSyncStatusUI() {
+  const badge = document.getElementById("sync-status-badge");
+  if (!badge) return;
+
+  const { githubUsername, githubRepo, githubToken } = adminState.settings;
+  
+  badge.className = "sync-badge";
+  if (githubUsername && githubRepo && githubToken) {
+    badge.classList.add("git-active");
+    badge.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> GitHub Sync Active`;
+  } else if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+    badge.classList.add("local-active");
+    badge.innerHTML = `<i class="fa-solid fa-server"></i> Local Server Mode`;
+  } else {
+    badge.classList.add("storage-active");
+    badge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Local Storage Only (Sync Disabled)`;
+  }
 }

@@ -305,6 +305,34 @@
       text-transform: capitalize;
     }
 
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+    .sync-badge.git-active {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+      border-color: rgba(34, 197, 94, 0.2);
+    }
+    .sync-badge.local-active {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border-color: rgba(245, 158, 11, 0.2);
+    }
+    .sync-badge.storage-active {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+
     @media (max-width: 900px) {
       .dashboard-wrapper-card {
         grid-template-columns: minmax(0, 1fr);
@@ -362,6 +390,7 @@
           <span class="logo-text" id="admin-store-name">Aura<span>Store</span></span>
         </a>
         <span class="admin-badge"><i class="fa-solid fa-shield-halved"></i> Owner Dashboard</span>
+        <span id="sync-status-badge" class="sync-badge"><i class="fa-solid fa-circle-notch fa-spin"></i> Checking sync...</span>
       </div>
 
       <div style="display:flex; align-items:center; gap:1rem;">

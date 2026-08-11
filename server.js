@@ -7,6 +7,7 @@ const PUBLIC_DIR = __dirname;
 const PRODUCTS_DIR = path.join(PUBLIC_DIR, 'products');
 const PRODUCTS_FILE = path.join(PRODUCTS_DIR, 'products.json');
 const UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads');
+const SETTINGS_FILE = path.join(PRODUCTS_DIR, 'settings.json');
 
 // Ensure directories exist
 if (!fs.existsSync(PRODUCTS_DIR)) {
@@ -51,6 +52,41 @@ const server = http.createServer((req, res) => {
         fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(products, null, 2));
         res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
         res.end(JSON.stringify({ success: true, message: 'Products saved successfully!' }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
+  // API Endpoint: Get Settings
+  if (pathname === '/api/settings' && req.method === 'GET') {
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
+    });
+    if (fs.existsSync(SETTINGS_FILE)) {
+      fs.createReadStream(SETTINGS_FILE).pipe(res);
+    } else {
+      res.end(JSON.stringify({}));
+    }
+    return;
+  }
+
+  // API Endpoint: Save Settings
+  if (pathname === '/api/settings' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+    req.on('end', () => {
+      try {
+        const settings = JSON.parse(body);
+        fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2));
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+        res.end(JSON.stringify({ success: true, message: 'Settings saved successfully!' }));
       } catch (err) {
         res.writeHead(400, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
         res.end(JSON.stringify({ success: false, error: err.message }));

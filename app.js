@@ -32,7 +32,7 @@ let state = {
   }, JSON.parse(localStorage.getItem("aura_settings")) || {}),
   filters: {
     category: "all",
-    maxPrice: 500,
+    maxPrice: Infinity,
     search: "",
     sort: "featured"
   }
@@ -82,6 +82,25 @@ const mobileDrawerOverlay = document.getElementById("mobile-drawer-overlay");
 const mobileDrawer = document.getElementById("mobile-drawer");
 const closeMobileDrawerBtn = document.getElementById("close-mobile-drawer");
 let mobileCatButtons = document.querySelectorAll(".mobile-cat-btn");
+
+// Load settings from local folder/server
+async function loadSettingsFromServer() {
+  try {
+    let response = await fetch("/api/settings").catch(() => null);
+    if (!response || !response.ok) {
+      response = await fetch("products/settings.json?v=" + Date.now());
+    }
+    if (response && response.ok) {
+      const data = await response.json();
+      if (data && typeof data === 'object' && !Array.isArray(data)) {
+        state.settings = Object.assign({}, state.settings, data);
+        localStorage.setItem("aura_settings", JSON.stringify(state.settings));
+      }
+    }
+  } catch (error) {
+    console.warn("Could not load settings from server, using cached local storage or defaults:", error);
+  }
+}
 
 // Load products from local folder/server
 async function loadProductsFromServer() {
@@ -202,6 +221,7 @@ function bindCategoryListeners() {
 
 // Initialize App
 document.addEventListener("DOMContentLoaded", async () => {
+  await loadSettingsFromServer();
   await loadProductsFromServer();
   renderCategoriesUI();
   applyDynamicSettings();
@@ -447,7 +467,7 @@ function setCategoryFilter(category) {
 window.setCategoryFilter = setCategoryFilter;
 
 function resetFilters() {
-  state.filters = { category: "all", maxPrice: 500, search: "", sort: "featured" };
+  state.filters = { category: "all", maxPrice: Infinity, search: "", sort: "featured" };
   if (searchInput) searchInput.value = "";
   if (clearSearchBtn) clearSearchBtn.classList.add("hidden");
   if (priceRange) priceRange.value = 500;
