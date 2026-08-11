@@ -1,5 +1,20 @@
 [
   {
+    "id": "cosmetics-1786462869189",
+    "title": "Mascara - Waterproof.",
+    "category": "cosmetics",
+    "price": 399,
+    "oldPrice": 680,
+    "rating": 5,
+    "reviews": 1,
+    "badge": "New",
+    "images": [
+      "https://lh3.googleusercontent.com/d/1CRTxKkYqK_FFMQmkRfx_YkPdouskbgka"
+    ],
+    "image": "https://lh3.googleusercontent.com/d/1CRTxKkYqK_FFMQmkRfx_YkPdouskbgka",
+    "description": "designed to deliver bold, full-coverage lashes with a long-lasting and reliable finish."
+  },
+  {
     "id": "tech-1786453123667",
     "title": "VLC icon",
     "category": "tech",
